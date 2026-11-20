@@ -1,0 +1,9 @@
+{
+    "name":  "local-messaging",
+    "version":  "0.2.0",
+    "description":  "Use Claude Code to participate in Local Messaging channels and sessions.",
+    "author":  {
+                   "name":  "gerald.khoo"
+               },
+    "license":  "MIT"
+}

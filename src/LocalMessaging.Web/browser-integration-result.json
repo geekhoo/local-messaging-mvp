@@ -1,0 +1,9 @@
+{
+  "scope": "Browser integration prerequisite",
+  "status": "blocked",
+  "checks": [],
+  "base": "http://127.0.0.1:37444",
+  "reason": "The installed browser could not launch in this environment. No UI acceptance check ran.",
+  "detail": "[pid=16][err] /usr/bin/chromium: 9: [: 5225713664: unexpected operator\n[pid=16][err] [16:16:1120/175824.521412:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)\n[pid=16][err] [1120/175824.521690:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)",
+  "observedAtUtc": "2026-11-20T09:58:24.529Z"
+}

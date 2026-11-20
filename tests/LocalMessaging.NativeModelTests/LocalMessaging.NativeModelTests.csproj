@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType></PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/LocalMessaging.Client/LocalMessaging.Client.csproj" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <Compile Include="../../src/LocalMessaging.WinUI/ShellViewModel.cs" Link="NativeSource/ShellViewModel.cs" />
+    <Compile Include="../../src/LocalMessaging.WinUI/NativeOptions.cs" Link="NativeSource/NativeOptions.cs" />
+    <Compile Include="../../src/LocalMessaging.WinUI/ThreadProjection.cs" Link="NativeSource/ThreadProjection.cs" />
+  </ItemGroup>
+</Project>

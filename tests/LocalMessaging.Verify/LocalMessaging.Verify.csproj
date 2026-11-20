@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType></PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../LocalMessaging.Scenarios/LocalMessaging.Scenarios.csproj" />
+    <None Include="../../docs/baseline-plan/data/implementation-plan.json" Link="plan/implementation-plan.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

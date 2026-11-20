@@ -1,0 +1,20 @@
+id,requirement,spec_sections,source_acceptance_refs,implementation_tasks,final_qualification_task,evidence_status
+R01,Run independently in the background,"Sections 4, 18","A01, A02",T001;T003;T035;T037;T038,T040,not_run
+R02,Local HTTP/3/QUIC pub/sub,"Sections 3–5, 10–12","A03, A04, A05",T003;T004;T011;T022;T023;T024;T035;T039,T040,not_run
+R03,Separate frontend API,"Sections 4–5, 13","A06, A07",T003;T004;T011;T018;T022;T024;T025;T029;T030;T034;T035,T040,not_run
+R04,User/channel/session/message dataobjects,"Sections 6–9, 14",A08–A14,T002;T005;T007;T008;T009;T010;T013;T014;T015;T016;T017,T040,not_run
+R05,Request contract carries dataobject,Sections 8,A08–A16,T002;T007;T008;T009;T010;T011;T012;T018;T021;T024,T040,not_run
+R06,Queryable subscription response,Sections 9–12,A17–A22,T002;T019;T020;T021;T022;T023;T024;T029;T034;T036;T039,T040,not_run
+R07,New channel creates first session; caller owns both,Sections 7–9,"A09, A10",T008;T010;T021;T026;T031,T040,not_run
+R08,Another caller creates/owns a session in an existing channel,Sections 7,A11,T009;T010;T021;T026;T031,T040,not_run
+R09,Publish all channels and sessions for discovery/subscription,"Sections 10, 13, 15","A18, A23",T008;T009;T013;T019;T020;T022;T025;T030,T040,not_run
+R10,Target users with `@user`,"Sections 7, 8, 10, 16",A24–A26,T014;T015;T016;T017;T020;T027;T032,T040,not_run
+R11,Threads no deeper than three levels,"Sections 7, 14, 16",A27–A29,T015;T016;T017;T027;T032,T040,not_run
+R12,Text and image messages,"Sections 8, 14, 17",A30–A33,T006;T010;T014;T016;T018;T026;T028;T031;T033,T040,not_run
+R13,EF Core + local SQLite,"Sections 3, 14, 18",A34–A38,T005;T007;T012;T013;T016;T017;T019;T020;T023;T036;T037;T039,T040,not_run
+R14,WinUI 3 frontend,Sections 16,A39–A42,T001;T030;T031;T032;T033;T034;T038,T040,not_run
+R15,HTML/JS/CSS frontend without a framework,Sections 16,A39–A42,T001;T025;T026;T027;T028;T029;T038,T040,not_run
+R16,Basic user creation without authentication,"Sections 6–8, 16, 19","A08, A43",T007;T025;T030,T040,not_run
+R17,Every user can create channel/session/message,"Sections 7, 13, 16","A11, A43",T008;T009;T010;T014;T015;T025;T026;T027;T030;T031;T032,T040,not_run
+R18,No content edit/delete in initial scope,"Sections 1, 13, 21",A44,T018,T040,not_run
+R19,Minimal reliability and operational behavior,"Sections 11–12, 17–20","A15–A16, A20–A22, A34–A38",T004;T005;T006;T007;T011;T012;T013;T016;T017;T018;T019;T020;T021;T022;T023;T024;T028;T029;T033;T034;T035;T036;T037;T038;T039,T040,not_run

@@ -1,0 +1,9 @@
+<Project>
+  <!-- Pin only the .NET runtimes. A global RuntimeFrameworkVersion also rewrites the unrelated Windows SDK reference pack. -->
+  <Target Name="PinLocalMessagingRuntimePacks" BeforeTargets="ProcessFrameworkReferences">
+    <ItemGroup>
+      <FrameworkReference Update="Microsoft.NETCore.App" RuntimeFrameworkVersion="10.0.15" />
+      <FrameworkReference Update="Microsoft.AspNetCore.App" RuntimeFrameworkVersion="10.0.15" />
+    </ItemGroup>
+  </Target>
+</Project>

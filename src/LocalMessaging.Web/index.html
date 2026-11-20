@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="Local conversations, running on your computer.">
+  <title>Local Messaging</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#conversation">Skip to conversation</a>
+  <header class="app-header">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">L</span><div><strong>Local Messaging</strong><span class="subtle">Your computer. Your conversations.</span></div></div>
+    <div class="header-actions">
+      <span id="connection" class="connection" role="status"><span class="status-dot" aria-hidden="true"></span><span id="connection-label">Starting</span></span>
+      <button id="reconnect" class="icon-button" title="Reconnect and refresh">Reconnect</button>
+      <label class="profile-label" for="profile">Selected user</label>
+      <select id="profile" aria-label="Selected user"><option value="">Select user</option></select>
+      <button id="new-user" class="secondary">Create user</button>
+      <button id="theme" class="icon-button" aria-label="Change color theme" title="Change color theme">◐</button>
+    </div>
+  </header>
+  <div id="notice" class="notice" role="status" hidden></div>
+  <div id="error-banner" class="error-banner" role="alert" hidden></div>
+  <main class="workspace">
+    <aside class="navigation" aria-label="Conversation navigation">
+      <div class="nav-section">
+        <div class="section-heading"><h2>Channels</h2><button id="new-channel" class="small-button" title="Create channel" disabled>+ New</button></div>
+        <p class="section-note">Open to every local user</p>
+        <nav id="channels" class="nav-tree" aria-label="Channels and their sessions"></nav>
+        <button id="more-channels" class="load-button" hidden>Load more channels</button>
+        <div class="selection-footer">
+          <div id="channel-detail" class="section-note">Select a channel</div>
+          <button id="channel-participants" class="small-button" hidden>Channel participants</button>
+        </div>
+      </div>
+      <button id="mentions" class="mentions-button" disabled><span aria-hidden="true">@</span> Mentions <span id="mentions-count" class="count" hidden></span></button>
+      <div class="local-note"><span class="status-dot" aria-hidden="true"></span> Stored locally with SQLite<br><span>Profiles identify callers. All conversations are public here.</span></div>
+    </aside>
+    <section id="conversation" class="conversation" aria-labelledby="conversation-title" tabindex="-1">
+      <header class="conversation-header">
+        <div><div id="conversation-eyebrow" class="eyebrow">LOCAL WORKSPACE</div><h1 id="conversation-title">A place to think together</h1><p id="conversation-subtitle">Create a user to start a conversation.</p></div>
+        <div class="scope-actions">
+          <button id="session-participants" class="secondary" hidden>Session participants</button>
+          <button id="refresh-view" class="secondary" hidden>Refresh</button>
+        </div>
+      </header>
+      <div id="activity" class="activity" role="status" hidden><span id="activity-label"></span><button id="show-latest" class="text-button">Show latest</button></div>
+      <div id="timeline" class="timeline" aria-live="polite" aria-relevant="additions text">
+        <div class="empty-state"><div class="empty-symbol" aria-hidden="true">✦</div><h2>Start with a local user</h2><p>Choose a handle and a display name. Then create a channel and bring a conversation to life.</p><button id="empty-create-user" class="primary">Create user</button></div>
+      </div>
+      <div id="history-controls" class="history-controls" hidden><button id="more-messages" class="load-button">Load earlier messages</button><span id="history-note" class="subtle"></span></div>
+      <section id="pending-section" class="pending-section" aria-labelledby="pending-title" hidden><h2 id="pending-title">Commands needing attention</h2><div id="pending-list"></div></section>
+      <form id="composer" class="composer" hidden>
+        <div id="reply-context" class="reply-context" hidden><span id="reply-label"></span><button id="cancel-reply" type="button" class="text-button">Cancel reply</button></div>
+        <div id="draft-owner" class="draft-owner"></div>
+        <label for="message-text" id="message-label" class="sr-only">Message</label>
+        <textarea id="message-text" rows="3" maxlength="16384" placeholder="Write a message… Use @handle to get someone's attention." aria-controls="target-suggestions" aria-expanded="false" aria-autocomplete="list" required></textarea>
+        <div id="image-preview" class="image-preview" hidden><img id="preview-image" alt="Selected image preview"><div><strong id="image-name"></strong><span id="image-size" class="subtle"></span></div><button id="remove-image" type="button" class="text-button">Remove</button></div>
+        <div id="target-chips" class="chips"></div>
+        <div id="target-suggestions" class="suggestions" role="listbox" aria-label="Mention suggestions" hidden></div>
+        <div class="composer-footer"><div class="composer-tools"><label class="attachment-button" for="image-file">＋ Image</label><input id="image-file" class="sr-only" type="file" accept="image/png,image/jpeg"><span class="subtle">Text · PNG · JPEG</span></div><div class="send-tools"><span id="character-count" class="subtle">0 / 16,384</span><button id="send" type="submit" class="primary">Send message <span aria-hidden="true">↗</span></button></div></div>
+        <p id="composer-error" class="field-error" role="alert" hidden></p>
+      </form>
+      <footer class="conversation-footer">Sent means saved by the host. Targeting brings attention to a public message.</footer>
+    </section>
+  </main>
+  <dialog id="public-dialog" aria-labelledby="public-title">
+    <div class="dialog-heading"><h2 id="public-title"></h2><button type="button" class="close-dialog icon-button" aria-label="Close">×</button></div>
+    <p id="public-description" class="subtle"></p>
+    <p id="public-caller" class="subtle"></p>
+    <div class="message-actions" id="public-actions">
+      <button id="public-join" type="button" class="primary"></button>
+      <button id="public-leave" type="button" class="secondary"></button>
+    </div>
+    <p id="public-command-status" role="status" hidden></p>
+    <p id="public-error" class="field-error" role="alert" hidden></p>
+    <p id="public-page-status" class="subtle" role="status"></p>
+    <ul id="public-items" hidden></ul>
+    <div class="dialog-actions">
+      <button id="public-refresh" type="button" class="secondary">Refresh list</button>
+      <button id="public-next" type="button" class="secondary" hidden>Next page</button>
+    </div>
+  </dialog>
+  <dialog id="user-dialog" aria-labelledby="user-dialog-title">
+    <form id="user-form"><div class="dialog-heading"><h2 id="user-dialog-title">Create a local user</h2><button type="button" class="close-dialog icon-button" aria-label="Close">×</button></div><p class="subtle">No password. You can select any local profile.</p><label for="user-handle">Handle</label><div class="input-prefix"><span>@</span><input id="user-handle" name="handle" required minlength="3" maxlength="32" pattern="[A-Za-z][A-Za-z0-9_]{2,31}" autocomplete="off" placeholder="gee_k"></div><p class="field-hint">3–32 letters, digits or underscores; start with a letter.</p><label for="user-name">Display name</label><input id="user-name" name="displayName" required maxlength="80" placeholder="Gee.K"><p class="field-error" role="alert" hidden></p><div class="dialog-actions"><button type="button" class="close-dialog secondary">Cancel</button><button type="submit" class="primary">Create user</button></div></form>
+  </dialog>
+  <dialog id="channel-dialog" aria-labelledby="channel-dialog-title">
+    <form id="channel-form"><div class="dialog-heading"><h2 id="channel-dialog-title">Create a channel</h2><button type="button" class="close-dialog icon-button" aria-label="Close">×</button></div><p class="subtle">You will own the channel and its first session.</p><label for="channel-name">Channel name</label><input id="channel-name" name="name" required maxlength="120" placeholder="Architecture"><label for="channel-description">Description <span class="subtle">(optional)</span></label><textarea id="channel-description" name="description" rows="2" maxlength="1000" placeholder="What belongs here?"></textarea><label for="first-session">First session</label><input id="first-session" name="initialSessionTitle" maxlength="120" placeholder="General"><p class="field-error" role="alert" hidden></p><div class="dialog-actions"><button type="button" class="close-dialog secondary">Cancel</button><button type="submit" class="primary">Create channel</button></div></form>
+  </dialog>
+  <dialog id="session-dialog" aria-labelledby="session-dialog-title">
+    <form id="session-form"><div class="dialog-heading"><h2 id="session-dialog-title">Create a session</h2><button type="button" class="close-dialog icon-button" aria-label="Close">×</button></div><p id="session-channel-label" class="subtle"></p><label for="session-title">Session title</label><input id="session-title" name="title" required maxlength="120" placeholder="Design review"><p class="field-hint">You own this session. The channel owner stays the same.</p><p class="field-error" role="alert" hidden></p><div class="dialog-actions"><button type="button" class="close-dialog secondary">Cancel</button><button type="submit" class="primary">Create session</button></div></form>
+  </dialog>
+</body>
+</html>

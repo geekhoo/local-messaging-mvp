@@ -1,0 +1,135 @@
+{
+  "package": "local-messaging-mvp-plan-v1",
+  "version": "1.0",
+  "prepared_date": "2026-11-20",
+  "content_scope": "Specifications and implementation plan only; application gates not run",
+  "counts": {
+    "milestones": 6,
+    "checkpoints": 14,
+    "tasks": 40,
+    "subtasks": 160,
+    "task_acceptance_criteria": 235,
+    "source_requirements": 19,
+    "source_acceptance_scenarios": 50
+  },
+  "source": {
+    "file": "specs/local-messaging-design-specification-v1.md",
+    "sha256": "6c69d61a7ceb93c11a180a54cf8d49001397c9ed14cb3b5f2ae746d8c6d05186",
+    "bytes": 114645,
+    "policy": "Included byte-for-byte unchanged; source governs product behavior."
+  },
+  "hash_algorithm": "SHA-256",
+  "self_exclusion": "This manifest does not hash itself.",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 4604,
+      "sha256": "fa4d035b88216c237052b355c7007deb6d2c3f71d490d843f4de3e3a64059cbe"
+    },
+    {
+      "path": "VALIDATION.md",
+      "bytes": 2795,
+      "sha256": "56912872662026a549f41c4625d6ec5cf1dc6510dff823b15a951ac54cc51630"
+    },
+    {
+      "path": "data/acceptance-coverage.csv",
+      "bytes": 18920,
+      "sha256": "0c50728b3b8619418223c2dccca86bc2c756eb742bc87197a6b91b401d7608b6"
+    },
+    {
+      "path": "data/implementation-plan.json",
+      "bytes": 233543,
+      "sha256": "77bbb7d91f74dfa97aece83e66eb706825e99c0c4bdd0283d84612121e375a5a"
+    },
+    {
+      "path": "data/requirements-coverage.csv",
+      "bytes": 2550,
+      "sha256": "acd767be958a3d4da612d9e6cccac8a456757886a2b8a3a750164e5204e03e39"
+    },
+    {
+      "path": "data/tasks.csv",
+      "bytes": 13496,
+      "sha256": "9aaac88eebf1d014591a16ffc1e7f7c5bb31179eb3b08c120cf5708b1292a7e0"
+    },
+    {
+      "path": "milestones/M01-foundation.md",
+      "bytes": 22823,
+      "sha256": "44de7b79dff27fa58dff7f9f1b86a42edb05cbe1522ed3cdb237cccf36b82bef"
+    },
+    {
+      "path": "milestones/M02-durable-creation.md",
+      "bytes": 21682,
+      "sha256": "1a0a0267f1b74631c16e706d2a6c4d4c95451e5e5b02e1a292f63c7af9e7bbc7"
+    },
+    {
+      "path": "milestones/M03-content-and-queries.md",
+      "bytes": 21905,
+      "sha256": "75277634e85ea967f6136210c583188a9073824ec4bc89a11ee80ae39c183e9d"
+    },
+    {
+      "path": "milestones/M04-pubsub-and-client.md",
+      "bytes": 23233,
+      "sha256": "ffefcd99a588a3dd714bc7151ea24dbbc6d02d53edacd0edcfbdc97983139ce5"
+    },
+    {
+      "path": "milestones/M05-frontends.md",
+      "bytes": 35749,
+      "sha256": "19b23f9ca02aae21d69f94de57e6d9011515acc25e3cb783b53e0916d4b29262"
+    },
+    {
+      "path": "milestones/M06-release.md",
+      "bytes": 24171,
+      "sha256": "ba229363b1ff269eb99e51aa48c58ee40ef3a216f7c2a54acb8da1f79438fb0d"
+    },
+    {
+      "path": "plan/01-roadmap.md",
+      "bytes": 8118,
+      "sha256": "87375dd2b394d9ebdc164e0bd40817dd8663b352fa0af47125d4e5aeb85678bd"
+    },
+    {
+      "path": "plan/02-gates-and-reviews.md",
+      "bytes": 11017,
+      "sha256": "3171b59ad46b47eb370b0f9a6d0076061a42f2abf0d7187e0088f6f18707289a"
+    },
+    {
+      "path": "plan/03-verification-and-traceability.md",
+      "bytes": 16250,
+      "sha256": "c93e3f00e6668f8be4aa3fae072e618ea547d4f31c092f2fbd8cc27ffb8da816"
+    },
+    {
+      "path": "plan/04-execution-guide.md",
+      "bytes": 7396,
+      "sha256": "4e75e0df3883a703131d9c4f3b4c2069ce55e08a48a56cf7b8fb87552afc9c19"
+    },
+    {
+      "path": "plan/05-spec-clarifications.md",
+      "bytes": 4501,
+      "sha256": "e8ee08be3ebf76d8cd4a5320c204e5e62e96bdc086dc33ce495b19da429d3bed"
+    },
+    {
+      "path": "specs/local-messaging-design-specification-v1.md",
+      "bytes": 114645,
+      "sha256": "6c69d61a7ceb93c11a180a54cf8d49001397c9ed14cb3b5f2ae746d8c6d05186"
+    },
+    {
+      "path": "templates/checkpoint-result.md",
+      "bytes": 1202,
+      "sha256": "416ea835257c795f4c094bafd936fb5f8cff06b85f1d6403a80d9fd243b66961"
+    },
+    {
+      "path": "templates/findings.csv",
+      "bytes": 185,
+      "sha256": "725c42c0e6628d5ae77fa6a5d60b3d731fd54c094f5153bbc51de497ec5f004a"
+    },
+    {
+      "path": "templates/milestone-review.md",
+      "bytes": 2983,
+      "sha256": "8523725dd4ce8339f34d91972d4501dd6f7f98f7dd58b90885aa0c40340a6583"
+    },
+    {
+      "path": "templates/task-result.md",
+      "bytes": 1714,
+      "sha256": "403e4fd4ef473d46c15c482568125428f3efddc8b7114b60c6dd7a440894af5d"
+    }
+  ]
+}

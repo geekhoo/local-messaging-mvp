@@ -1,0 +1,21 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/LocalMessaging.Application/LocalMessaging.Application.csproj" />
+    <Project Path="src/LocalMessaging.Client/LocalMessaging.Client.csproj" />
+    <Project Path="src/LocalMessaging.Contracts/LocalMessaging.Contracts.csproj" />
+    <Project Path="src/LocalMessaging.Host/LocalMessaging.Host.csproj" />
+    <Project Path="src/LocalMessaging.Infrastructure/LocalMessaging.Infrastructure.csproj" />
+    <Project Path="src/LocalMessaging.Platform.Windows/LocalMessaging.Platform.Windows.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/LocalMessaging.ClientTests/LocalMessaging.ClientTests.csproj" />
+    <Project Path="tests/LocalMessaging.NativeModelTests/LocalMessaging.NativeModelTests.csproj" />
+    <Project Path="tests/LocalMessaging.Platform.WindowsTests/LocalMessaging.Platform.WindowsTests.csproj" />
+    <Project Path="tests/LocalMessaging.Scenarios/LocalMessaging.Scenarios.csproj" />
+    <Project Path="tests/LocalMessaging.StoreTests/LocalMessaging.StoreTests.csproj" />
+    <Project Path="tests/LocalMessaging.Verify/LocalMessaging.Verify.csproj" />
+  </Folder>
+  <Folder Name="/samples/">
+    <Project Path="samples/LocalMessaging.ConsoleClient/LocalMessaging.ConsoleClient.csproj" />
+  </Folder>
+</Solution>

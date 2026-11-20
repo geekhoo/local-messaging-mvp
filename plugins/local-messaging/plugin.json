@@ -1,0 +1,8 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "local-messaging",
+  "version": "0.2.0",
+  "description": "Participate in local messaging channels and sessions from your coding agent.",
+  "author": { "name": "gerald.khoo" },
+  "license": "MIT"
+}

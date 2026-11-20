@@ -1,0 +1,40 @@
+id,finding,status,correction_or_required_closure,verification
+H01,Host static files could be served outside F,closed_fixed,"Frontend-only branch, no API static dispatch",HTTP boundary tests and independent store review
+H02,Failure outcome logging reported default200,closed_fixed,Log after outer exception/status translation; include requestId,Actual translated409 logging regression
+H03,Diagnostic filesystem failure could alter committed outcome,closed_fixed,Contain provider IO; one visible warning per episode,Actual obstructed log path verifies201/receipt/retry/recovery
+B01,Handwritten EF snapshot produced pending-model warning,closed_fixed,Regenerate migration/snapshot from actual model,Actual migrate/reopen and zero-warning build
+B02,Global runtime pin changed Windows SDK ref package,closed_fixed,Per-framework NETCore/ASPNet metadata pins only,Complete restore zero warnings; no NU1505 suppression
+B03,Missing solution x64 configuration,closed_fixed,Declare full solution configurations,ValidateSolutionConfiguration successful
+B04,Solution-wide RuntimeIdentifier rejected with NETSDK1134,closed_fixed,Remove globalRID from solutionbuild; retain projectRID forWinUI and per-projectpublishRID,Correctedfullbuild reaches Windows mt.exe; portablebuildpasses
+W01,Bounded history cache discarded later pages,closed_fixed,Sliding bounded windows preserve reachable pagination,Web paging tests
+W02,Temporary storage control frames were parsed as durable events,closed_fixed,Reconnect without cursor advancement for three ID-less503 controls,Web and native client regression tests
+Q01,Workload consumers could finish against stale per-page head,closed_fixed,Reconcile all consumers to final publication head,20consumers reconcile20100 IDs and final21203sequence
+E01,Windows build/runtime surface unavailable,open_blocker,Requires actualWindows11x64 execution,Fullbuild mt.exe exit126; WICblocked2; no Windows acceptance
+E02,Actual browser execution unavailable,open_blocker,Run suppliedscenario in permitted browser against product,Chromium Unixsocket EPERM and managedbrowserloopback/policyblock
+E03,Clean-machine/operator/PAC/pairedUI qualification unavailable,open_blocker,Complete actualWindows checklist and independent gates,No fabricated observations or milestoneexit
+N01,See native-review.md corresponding finding,closed_fixed,See independently reviewed correction and regression,Portable/source evidence; actualUI gate remainsblocked
+N02,See native-review.md corresponding finding,closed_fixed,See independently reviewed correction and regression,Portable/source evidence; actualUI gate remainsblocked
+N03,See native-review.md corresponding finding,closed_fixed,See independently reviewed correction and regression,Portable/source evidence; actualUI gate remainsblocked
+N04,See native-review.md corresponding finding,closed_fixed,See independently reviewed correction and regression,Portable/source evidence; actualUI gate remainsblocked
+N05,See native-review.md corresponding finding,closed_fixed,See independently reviewed correction and regression,Portable/source evidence; actualUI gate remainsblocked
+N06,See native-review.md corresponding finding,closed_fixed,See independently reviewed correction and regression,Portable/source evidence; actualUI gate remainsblocked
+N07,See native-review.md corresponding finding,closed_fixed,See independently reviewed correction and regression,Portable/source evidence; actualUI gate remainsblocked
+N08,See native-review.md corresponding finding,closed_fixed,See independently reviewed correction and regression,Portable/source evidence; actualUI gate remainsblocked
+N09,See native-review.md corresponding finding,closed_fixed,See independently reviewed correction and regression,Portable/source evidence; actualUI gate remainsblocked
+N10,See native-review.md corresponding finding,closed_fixed,See independently reviewed correction and regression,Portable/source evidence; actualUI gate remainsblocked
+N11,See native-review.md corresponding finding,closed_fixed,See independently reviewed correction and regression,Portable/source evidence; actualUI gate remainsblocked
+N12,See native-review.md corresponding finding,closed_fixed,See independently reviewed correction and regression,Portable/source evidence; actualUI gate remainsblocked
+N13,See native-review.md corresponding finding,closed_fixed,See independently reviewed correction and regression,Portable/source evidence; actualUI gate remainsblocked
+N14,See native-review.md corresponding finding,closed_fixed,See independently reviewed correction and regression,Portable/source evidence; actualUI gate remainsblocked
+N15,See native-review.md corresponding finding,closed_fixed,See independently reviewed correction and regression,Portable/source evidence; actualUI gate remainsblocked
+N16,See native-review.md corresponding finding,closed_fixed,See independently reviewed correction and regression,Portable/source evidence; actualUI gate remainsblocked
+VR01,See verifier-review.md corresponding finding,closed_fixed,See independently reviewed correction,Source review and CLI guard evidence; Windowsexecutionblocked
+VR02,See verifier-review.md corresponding finding,closed_fixed,See independently reviewed correction,Source review and CLI guard evidence; Windowsexecutionblocked
+VR03,See verifier-review.md corresponding finding,closed_fixed,See independently reviewed correction,Source review and CLI guard evidence; Windowsexecutionblocked
+VR04,See verifier-review.md corresponding finding,closed_fixed,See independently reviewed correction,Source review and CLI guard evidence; Windowsexecutionblocked
+VR05,See verifier-review.md corresponding finding,closed_fixed,See independently reviewed correction,Source review and CLI guard evidence; Windowsexecutionblocked
+VR06,See verifier-review.md corresponding finding,closed_fixed,See independently reviewed correction,Source review and CLI guard evidence; Windowsexecutionblocked
+VR07,See verifier-review.md corresponding final finding,closed_fixed,"See independently reviewed exact UTC, inventory path, solution invocation and executable lookup corrections",Actual retained helper fixtures; source review; Windows runtime remains blocked
+VR08,See verifier-review.md corresponding final finding,closed_fixed,"See independently reviewed exact UTC, inventory path, solution invocation and executable lookup corrections",Actual retained helper fixtures; source review; Windows runtime remains blocked
+VR09,See verifier-review.md corresponding final finding,closed_fixed,"See independently reviewed exact UTC, inventory path, solution invocation and executable lookup corrections",Actual retained helper fixtures; source review; Windows runtime remains blocked
+VR10,See verifier-review.md corresponding final finding,closed_fixed,"See independently reviewed exact UTC, inventory path, solution invocation and executable lookup corrections",Actual retained helper fixtures; source review; Windows runtime remains blocked

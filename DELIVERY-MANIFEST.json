@@ -1,0 +1,1523 @@
+{
+  "schemaVersion": 1,
+  "name": "Local Messaging MVP source implementation",
+  "createdAtUtc": "2026-11-20T10:53:06.016435+00:00",
+  "candidateCommit": "373365b781cf2e5766e396e3f74696f99f68b221",
+  "sourceBranch": "main",
+  "artifactKind": "source-with-verification-evidence",
+  "qualifiedWindowsRelease": false,
+  "portableVerification": "passed",
+  "portableReport": "evidence/runtime/final/verification.json",
+  "formalTaskCheckpointMilestoneGates": "not_accepted",
+  "requiredRemainingEnvironment": "Windows 11 x64 for full build, genuine QUIC/TLS, WIC, native and browser UI, operator/PAC and clean-machine qualification",
+  "fullWindowsBuild": "blocked: Microsoft mt.exe cannot execute on Linux",
+  "browserExecution": "blocked before successful UI execution",
+  "baselineFilesPreservedByteForByte": 23,
+  "specSha256": "6c69d61a7ceb93c11a180a54cf8d49001397c9ed14cb3b5f2ae746d8c6d05186",
+  "taskCount": 40,
+  "taskCriterionCount": 235,
+  "sourceAcceptanceCount": 50,
+  "files": [
+    {
+      "path": ".gitignore",
+      "bytes": 122,
+      "sha256": "e68a3c83f1ce7921ea365862ea3fb4b1bc232a4ab042a3673b9c72480cc2fa2a",
+      "origin": "committed-source"
+    },
+    {
+      "path": "Directory.Build.props",
+      "bytes": 515,
+      "sha256": "88b135a97888010906fb33e7f2704db89029b845f22653a12ff5839296b8ed94",
+      "origin": "committed-source"
+    },
+    {
+      "path": "Directory.Build.targets",
+      "bytes": 476,
+      "sha256": "7e7bd2837a175a8c94b1e7469041c1fd1478327181c63b433f20b7c5cee3c143",
+      "origin": "committed-source"
+    },
+    {
+      "path": "Directory.Packages.props",
+      "bytes": 494,
+      "sha256": "dd5542e92d6748167214a539bd01d8fb3bc283082148b179c85eca9b8b25e916",
+      "origin": "committed-source"
+    },
+    {
+      "path": "LocalMessaging.Core.slnx",
+      "bytes": 1303,
+      "sha256": "44f7a6ab6af300a7d79ddc671aba3cc67021caf6995b3403dd2297a64b8f9e59",
+      "origin": "committed-source"
+    },
+    {
+      "path": "LocalMessaging.slnx",
+      "bytes": 1478,
+      "sha256": "260d1b780c79881538add60953af52be6092c2ef271a13b324eb86b7ebc7fc99",
+      "origin": "committed-source"
+    },
+    {
+      "path": "NuGet.Config",
+      "bytes": 198,
+      "sha256": "593813d027ae058c94c59138c6618d9b3526a825d91db6e0e3bec2c5d60c07fc",
+      "origin": "committed-source"
+    },
+    {
+      "path": "README.md",
+      "bytes": 10657,
+      "sha256": "120c04b19c6a7d1b19cb806637ce4355bde01f92a549c74389445c38d072d271",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/acceptance-status.csv",
+      "bytes": 14303,
+      "sha256": "749f4f17d4c7ca3840816a9c6545339ff05e336003fba547b41c66b2f2ef3087",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/api.md",
+      "bytes": 9472,
+      "sha256": "03fe99fcfe3686851450989a401e6569e05825c4358ce4a5f7aafeb973cd06d3",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/baseline-plan/PACKAGE-MANIFEST.json",
+      "bytes": 4363,
+      "sha256": "1d9e0844e2b25705071a1cc90aa3620374adccd48079d7480d88f2af4c5d02ec",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/baseline-plan/README.md",
+      "bytes": 4604,
+      "sha256": "fa4d035b88216c237052b355c7007deb6d2c3f71d490d843f4de3e3a64059cbe",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/baseline-plan/VALIDATION.md",
+      "bytes": 2795,
+      "sha256": "56912872662026a549f41c4625d6ec5cf1dc6510dff823b15a951ac54cc51630",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/baseline-plan/data/acceptance-coverage.csv",
+      "bytes": 18920,
+      "sha256": "0c50728b3b8619418223c2dccca86bc2c756eb742bc87197a6b91b401d7608b6",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/baseline-plan/data/implementation-plan.json",
+      "bytes": 233543,
+      "sha256": "77bbb7d91f74dfa97aece83e66eb706825e99c0c4bdd0283d84612121e375a5a",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/baseline-plan/data/requirements-coverage.csv",
+      "bytes": 2550,
+      "sha256": "acd767be958a3d4da612d9e6cccac8a456757886a2b8a3a750164e5204e03e39",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/baseline-plan/data/tasks.csv",
+      "bytes": 13496,
+      "sha256": "9aaac88eebf1d014591a16ffc1e7f7c5bb31179eb3b08c120cf5708b1292a7e0",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/baseline-plan/milestones/M01-foundation.md",
+      "bytes": 22823,
+      "sha256": "44de7b79dff27fa58dff7f9f1b86a42edb05cbe1522ed3cdb237cccf36b82bef",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/baseline-plan/milestones/M02-durable-creation.md",
+      "bytes": 21682,
+      "sha256": "1a0a0267f1b74631c16e706d2a6c4d4c95451e5e5b02e1a292f63c7af9e7bbc7",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/baseline-plan/milestones/M03-content-and-queries.md",
+      "bytes": 21905,
+      "sha256": "75277634e85ea967f6136210c583188a9073824ec4bc89a11ee80ae39c183e9d",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/baseline-plan/milestones/M04-pubsub-and-client.md",
+      "bytes": 23233,
+      "sha256": "ffefcd99a588a3dd714bc7151ea24dbbc6d02d53edacd0edcfbdc97983139ce5",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/baseline-plan/milestones/M05-frontends.md",
+      "bytes": 35749,
+      "sha256": "19b23f9ca02aae21d69f94de57e6d9011515acc25e3cb783b53e0916d4b29262",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/baseline-plan/milestones/M06-release.md",
+      "bytes": 24171,
+      "sha256": "ba229363b1ff269eb99e51aa48c58ee40ef3a216f7c2a54acb8da1f79438fb0d",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/baseline-plan/plan/01-roadmap.md",
+      "bytes": 8118,
+      "sha256": "87375dd2b394d9ebdc164e0bd40817dd8663b352fa0af47125d4e5aeb85678bd",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/baseline-plan/plan/02-gates-and-reviews.md",
+      "bytes": 11017,
+      "sha256": "3171b59ad46b47eb370b0f9a6d0076061a42f2abf0d7187e0088f6f18707289a",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/baseline-plan/plan/03-verification-and-traceability.md",
+      "bytes": 16250,
+      "sha256": "c93e3f00e6668f8be4aa3fae072e618ea547d4f31c092f2fbd8cc27ffb8da816",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/baseline-plan/plan/04-execution-guide.md",
+      "bytes": 7396,
+      "sha256": "4e75e0df3883a703131d9c4f3b4c2069ce55e08a48a56cf7b8fb87552afc9c19",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/baseline-plan/plan/05-spec-clarifications.md",
+      "bytes": 4501,
+      "sha256": "e8ee08be3ebf76d8cd4a5320c204e5e62e96bdc086dc33ce495b19da429d3bed",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/baseline-plan/specs/local-messaging-design-specification-v1.md",
+      "bytes": 114645,
+      "sha256": "6c69d61a7ceb93c11a180a54cf8d49001397c9ed14cb3b5f2ae746d8c6d05186",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/baseline-plan/templates/checkpoint-result.md",
+      "bytes": 1202,
+      "sha256": "416ea835257c795f4c094bafd936fb5f8cff06b85f1d6403a80d9fd243b66961",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/baseline-plan/templates/findings.csv",
+      "bytes": 185,
+      "sha256": "725c42c0e6628d5ae77fa6a5d60b3d731fd54c094f5153bbc51de497ec5f004a",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/baseline-plan/templates/milestone-review.md",
+      "bytes": 2983,
+      "sha256": "8523725dd4ce8339f34d91972d4501dd6f7f98f7dd58b90885aa0c40340a6583",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/baseline-plan/templates/task-result.md",
+      "bytes": 1714,
+      "sha256": "403e4fd4ef473d46c15c482568125428f3efddc8b7114b60c6dd7a440894af5d",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/implementation-decisions.md",
+      "bytes": 8555,
+      "sha256": "39806a6ef7fdf69b6977b1d829e3595fafd18a271b901c2e4cd69e27fa70906a",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/operators.md",
+      "bytes": 9490,
+      "sha256": "b35726ae5eef7166662b1fb7c03601340accefecc4718109d747d8c2065d9011",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/qualification-observations.template.json",
+      "bytes": 67756,
+      "sha256": "ce9784173fa0d1a353ba8889eec52bcd74185f918f079f0c4987abed4b12bed5",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/task-criteria-matrix.csv",
+      "bytes": 77494,
+      "sha256": "acdb716a8d052bec202cb2dec32674fd97ec59e33509d8e9301789bb430ac364",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/task-matrix.csv",
+      "bytes": 18207,
+      "sha256": "1c916847e8ef1f89d497292dd1a0ee24b68f3fb00871fb9d85bdc7b9999b7055",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/validation.md",
+      "bytes": 10143,
+      "sha256": "9826a83d53f94574fd87d4cd352a70500faddfa7015e88c88ca6d01c207f2d25",
+      "origin": "committed-source"
+    },
+    {
+      "path": "docs/windows-qualification.md",
+      "bytes": 10238,
+      "sha256": "a88589ce41544359c13584f4e37b74987143a60edc91ed113195d22b43dbb457",
+      "origin": "committed-source"
+    },
+    {
+      "path": "eng/autostart.ps1",
+      "bytes": 4219,
+      "sha256": "2ef664456ac20dd9153d8da68b5a159196e05897c426c2b1e4809316faf006b1",
+      "origin": "committed-source"
+    },
+    {
+      "path": "eng/build.ps1",
+      "bytes": 4242,
+      "sha256": "ba6b741710eecfda68333c5fafed579c47f926d35429a5b415ec19e4afa04594",
+      "origin": "committed-source"
+    },
+    {
+      "path": "eng/publish.ps1",
+      "bytes": 9857,
+      "sha256": "597969f803eddfd247b6bfabee8639974c2dd9e6c7d51adf14db610c36a84c5d",
+      "origin": "committed-source"
+    },
+    {
+      "path": "eng/start.ps1",
+      "bytes": 8032,
+      "sha256": "c39bea679fb476a379cad0222e42a13243202e16744329120154a5f05eb1ca9d",
+      "origin": "committed-source"
+    },
+    {
+      "path": "eng/stop.ps1",
+      "bytes": 5508,
+      "sha256": "ae25b5cfaecfca888a95ec5bc5bd455aa4f3f605b82b75b372a27ffe38c24f43",
+      "origin": "committed-source"
+    },
+    {
+      "path": "eng/verify.ps1",
+      "bytes": 11179,
+      "sha256": "167b7db05281e1886d08b6f255ff22e467e249a07521f6bd6a8e8ea1fa4b6b41",
+      "origin": "committed-source"
+    },
+    {
+      "path": "evidence/native-components/client-tests.log",
+      "bytes": 3813,
+      "sha256": "d90eea1cc44882bf4c5d18d5caee83ca80db1636644f25afed9af9461bc602e9",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/native-components/console-client-build.log",
+      "bytes": 475,
+      "sha256": "bda02cfec460e1bf7179502efb8cca6c0f469c45cdc96ecdc417ae06f213ae66",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/native-components/console-fixture-host.log",
+      "bytes": 197,
+      "sha256": "09d654ba385750b64c965e9d1672b8f6cb01841b0b905dfa1e2c786d82c9068b",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/native-components/console-sample-runtime.json",
+      "bytes": 1534,
+      "sha256": "1b7fcfd4d7bebc978c9446bd87e3faa970f42442b986c9e485d3a0dd8950dd61",
+      "origin": "committed-source"
+    },
+    {
+      "path": "evidence/native-components/console-sample-transcript.json",
+      "bytes": 23764,
+      "sha256": "08dc6359c3bdca48343604431da3b7315e89becacf269e369f4c0a3a0a6a5546",
+      "origin": "committed-source"
+    },
+    {
+      "path": "evidence/native-components/console-watch-stderr.log",
+      "bytes": 88,
+      "sha256": "337f367306c951dbdffee21a53822f6f0252f268100a493625eb2aa5e7676000",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/native-components/console-watch.jsonl",
+      "bytes": 4260,
+      "sha256": "e790de5f77296d490ae8e84979ce73d4daa993110ca1ec10518032599b3198cd",
+      "origin": "committed-source"
+    },
+    {
+      "path": "evidence/native-components/native-full-build-attempt.log",
+      "bytes": 1900,
+      "sha256": "5f349c2fe44fba15b31557b4f999c77ec84b38367d507b8916935ef3c1894601",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/native-components/native-managed-compile.log",
+      "bytes": 223,
+      "sha256": "7b6f0ac9a97c315dd797e681f59a84114f321cd6b99aecf3b9110710de517f57",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/native-components/native-model-tests.log",
+      "bytes": 1975,
+      "sha256": "ab1cc0b0a6c85da4449df86eb6bd46579b84610ee3d51ffbfb54c037a12b34dd",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/native-components/results.json",
+      "bytes": 10409,
+      "sha256": "48da641e9e7eea798a297f963a433fbd88434f7fa66838936b34ec54d2f2bee3",
+      "origin": "committed-source"
+    },
+    {
+      "path": "evidence/native-components/wic-build.log",
+      "bytes": 683,
+      "sha256": "5b708661e7897172682416710c0573ae0b72de3c1cd09520392771c3afd14717",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/native-components/wic-runtime.log",
+      "bytes": 133,
+      "sha256": "e452a2d76c24c7c828d15136fbccea5b0a5b31c9d4cd09f4e1ba922e647ab48a",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/native-review.md",
+      "bytes": 11159,
+      "sha256": "5031180626817af52b5d0d414500981cbfd9ca5da8556a4f2ec5608422ef31a7",
+      "origin": "committed-source"
+    },
+    {
+      "path": "evidence/reviews/M01.md",
+      "bytes": 4424,
+      "sha256": "cab33b8bbde62d6db55b0a2d88cd98871d919adf9407c51d3a0299a58f83ff1e",
+      "origin": "committed-source"
+    },
+    {
+      "path": "evidence/reviews/M02.md",
+      "bytes": 4397,
+      "sha256": "be2158b8fda30316c51f573c382c8c3d44d04371c66625986dc4740f5d9aec07",
+      "origin": "committed-source"
+    },
+    {
+      "path": "evidence/reviews/M03.md",
+      "bytes": 4386,
+      "sha256": "52e7a2aad7f169fb9a0869f38e4187d33a6330f1513bd92fa6ec56e910baf65e",
+      "origin": "committed-source"
+    },
+    {
+      "path": "evidence/reviews/M04.md",
+      "bytes": 4420,
+      "sha256": "e3f0f8824b2981557b1b365d965387121f5ad227ce2a84820dc03293d197e3bd",
+      "origin": "committed-source"
+    },
+    {
+      "path": "evidence/reviews/M05.md",
+      "bytes": 4410,
+      "sha256": "525f3c6113325a9807d2ce50349ded5fa2207d8fb6f08fac517f4c2b0da5e18f",
+      "origin": "committed-source"
+    },
+    {
+      "path": "evidence/reviews/M06.md",
+      "bytes": 4425,
+      "sha256": "9990f2df3523001697928269c1ef399e79fa53e5a3dadd89cd2980b728b8c990",
+      "origin": "committed-source"
+    },
+    {
+      "path": "evidence/reviews/findings.csv",
+      "bytes": 6982,
+      "sha256": "a2973cdfae49ecd96da91765da129412b207ac61f80b79b9cca37724a72d9e36",
+      "origin": "committed-source"
+    },
+    {
+      "path": "evidence/runtime/contracts.json",
+      "bytes": 705,
+      "sha256": "cf875af670cc89f21cc7cfaffae6815cf9bd405deff679dbc3708a4090023eda",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final-build/core-build.json",
+      "bytes": 394,
+      "sha256": "68b0233ba9553c26e81ff6475e53fdc0053cafa357962e1dfb24aebcd4262d51",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final-build/core-build.log",
+      "bytes": 2207,
+      "sha256": "8ec064a9470e7648f651117cec8c4a5c007b72606ff7f2c180760337cb351977",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final-build/core-restore.log",
+      "bytes": 1821,
+      "sha256": "629d82286983d3522633f4cb872ec7aa026812af2cacc119c98232b3aebbc2a1",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/build-details/core-build.json",
+      "bytes": 394,
+      "sha256": "642a44915a37dc3196a22a5dd2a6e7919cdc2d41d53989f3770151241f1ab247",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/build-details/core-build.log",
+      "bytes": 2207,
+      "sha256": "adb79ad06fb1e86b3b3e100cbc003c155b2061987b1985eaa25fd3e05c15e1ad",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/build-details/core-restore.log",
+      "bytes": 80,
+      "sha256": "40d104602671164ab3958225da3e1c8cabd55f0251d6df6bc911d9d5a24f44ce",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/build.log",
+      "bytes": 2751,
+      "sha256": "6d14ba144ab1a194f69954bef3f77a49d16cb3c044caa8bfdb91d482e01cde52",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/cli-blocked-A03/qualification.json",
+      "bytes": 1039,
+      "sha256": "6d52125db3d34c362db2698298d48d76f2756d8e2583a5201e3f3aff18972a06",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/cli-blocked-T002/qualification.json",
+      "bytes": 1031,
+      "sha256": "f032c8f74513c0e22912035914436fad897a3652996fb6308ea1ae965922f8cc",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/cli-duplicate-option.log",
+      "bytes": 53,
+      "sha256": "8d27d63ae8a55abfec11a099cc2078c0854e9a8c0e40014e0815e80a050471f6",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/cli-guards.json",
+      "bytes": 8075,
+      "sha256": "0b136754dfb0300caefab874f1b8b33631fa1b9d322b029c902e832000da559e",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/cli-help.log",
+      "bytes": 335,
+      "sha256": "e56ad33a5cdf2d8b33f34b41e2a1a74885bc2bb04551c4b96e700e09a8e86578",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/cli-incomplete-option.log",
+      "bytes": 53,
+      "sha256": "8d27d63ae8a55abfec11a099cc2078c0854e9a8c0e40014e0815e80a050471f6",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/cli-platform-A03.log",
+      "bytes": 185,
+      "sha256": "cd3c3ec0ff3b70929f5ca675dc20a05ac34e405fe5955a8870f227edcebe9f57",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/cli-platform-T002.log",
+      "bytes": 181,
+      "sha256": "bd3028ff1662781caa7939c5ed8439062c099dbf1a4c8840da1c7d61baff166e",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/cli-product-evidence-refusal.log",
+      "bytes": 73,
+      "sha256": "d3250b368e142267d4a531362a0fc181fbc1aaaa636c5dbcf2f2711b3761de0c",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/cli-production-platform.log",
+      "bytes": 129,
+      "sha256": "8ae69c9226cdda69f530372c271d9c34a22adb3429def046635e2fcd3a4d43ce",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/cli-scenarios-windows.log",
+      "bytes": 161,
+      "sha256": "ff923be1b090a5b9973fa007d10ab0a3009f7fcadb750f3354c1a2f90d739ca8",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/cli-unknown-acceptance.log",
+      "bytes": 23,
+      "sha256": "b8423a72be2932a3985c3d51f8fcfe21d0720edcce8b95bfa5c87f8b7c837c97",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/cli-unknown-plan-task.log",
+      "bytes": 64,
+      "sha256": "41b78a666deaed8ac0dad952735958e0f23f3e465cc2dadb598d6aaf388f6868",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/cli-verifier-evidence-refusal.log",
+      "bytes": 73,
+      "sha256": "d3250b368e142267d4a531362a0fc181fbc1aaaa636c5dbcf2f2711b3761de0c",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/cli-wic-windows.log",
+      "bytes": 133,
+      "sha256": "e452a2d76c24c7c828d15136fbccea5b0a5b31c9d4cd09f4e1ba922e647ab48a",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/cli-windows-scenarios.json",
+      "bytes": 318,
+      "sha256": "d00388c1d9f38207b8d6d7c0cd3fffa0f9b539f7940c319afd1fb5133fffee6c",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/client.log",
+      "bytes": 3813,
+      "sha256": "d90eea1cc44882bf4c5d18d5caee83ca80db1636644f25afed9af9461bc602e9",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/contracts.json",
+      "bytes": 705,
+      "sha256": "0ef448cd30f8a34d09b0e681d5b952aca14cec9bb12cd0931c7aa5a2ec01c462",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/contracts.log",
+      "bytes": 357,
+      "sha256": "acd3dacbdc23f5ce5d7b319fd5f2a87a2bb047996de7a79975f4ed91bc70394c",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/delivery-review.md",
+      "bytes": 1592,
+      "sha256": "fe43bf967b0ee3dfc1afa4bc3249519b5e746204dbd21c642a138340d805c69b",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/git-bundle-verification.log",
+      "bytes": 293,
+      "sha256": "742d57184f5da8040bf8c97f1c197c0cd8bc44e96c7c21992e79d5f7a35844d9",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/native-model.log",
+      "bytes": 1975,
+      "sha256": "ab1cc0b0a6c85da4449df86eb6bd46579b84610ee3d51ffbfb54c037a12b34dd",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/operator-scripts.json",
+      "bytes": 4092,
+      "sha256": "bf576ad151f8bb102c946e26fe1fead88871956ae869267bc5833d6e9ff49c87",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/operator-scripts.log",
+      "bytes": 1062,
+      "sha256": "1c561f33a2231f83e45c201017f9e4c4bacec0fcdfc039167df2b208edfb8ee7",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/source-normalization.json",
+      "bytes": 10595,
+      "sha256": "92e43cebf3ee084ccc5bcc3f513ea59f56d24efc9a0b717acbaf71551bd528f9",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/store.json",
+      "bytes": 5821,
+      "sha256": "f913470ef01b1cd3d40fb9ca9432683ea5cca102524b8d15d259ccb748ed3f26",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/store.log",
+      "bytes": 2591,
+      "sha256": "7396904656c94b12de0531bb2b491c6211de737badf7982f7c48f0a605da8a80",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/syntax-api.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/syntax-app.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/syntax-state.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/syntax-stream.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/syntax-views.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/transport.json",
+      "bytes": 6421,
+      "sha256": "d01cc637aea70f4ddaa3899f1ef6025121e65964466ba824a131d28a9ba76897",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/transport.log",
+      "bytes": 2762,
+      "sha256": "1d43ce7e6e1018774ae900a93152207434547710b3ca241b510e8d23adb0c4c8",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/verification.json",
+      "bytes": 6829,
+      "sha256": "6b6c50818f5cf643ebac1d3b9f565302ab3b7c65e3553179b8701005445905ec",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/verifier-guards.json",
+      "bytes": 4401,
+      "sha256": "d84565504e098ac829bbed518171e1cc6cc6988883628ee6f5238cb0fdbb1cb5",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/verifier-guards.log",
+      "bytes": 1558,
+      "sha256": "d79148fc23e732ec813502fb3e6cfdaf598b29faa9b9d70a4f8341976754cbff",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/web.log",
+      "bytes": 5188,
+      "sha256": "481eb7b8ae5e60db78a4392ed7a354208fd26e9d5903a221efa221b8c32be825",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/windows-build-attempts.json",
+      "bytes": 1386,
+      "sha256": "bb5a13bed065aa0deff7df14755eb0410b43de67a29192c55f4b9a65210b9c2e",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/windows-full-build.log",
+      "bytes": 3884,
+      "sha256": "e01f5365dc7a2b8ef79a4f9dc0d7618c4b960ce2940a11ddd72975c29624aef7",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/winui-managed.log",
+      "bytes": 266,
+      "sha256": "1abc2d0cd1e6a1183023b254d2f87a5891d94640945a6446a193182fe9f8276f",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/workload.json",
+      "bytes": 5538,
+      "sha256": "3f9ea7ce1b75180c523a07766a3ac7ba92d5af81b59865c12c47a656fb5269cf",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/final/workload.log",
+      "bytes": 1391,
+      "sha256": "3dd17380b8e9cfbe01d546be443c2f5e977dcad2cb0e5a09d6156b8770071b5d",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/integration-review/transport.json",
+      "bytes": 6422,
+      "sha256": "e18f82cbc3b95e9845ec6702e64e2f734db15615ad79f1ffb30c9ee11682354d",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/integration-review/transport.log",
+      "bytes": 2775,
+      "sha256": "418173e674af6f7dce48ff4c12a9c9e93b1120d547c4724871b05ed130a196f3",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/transport.json",
+      "bytes": 4816,
+      "sha256": "e73c6b807986d6c135447ec1cc539eb3b967cc1ab2625bd722809a97b806bf7d",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/verify-script-check/client.log",
+      "bytes": 3381,
+      "sha256": "f0bf27287ef17ac16279c71da7bcf7b7e9952b2907c0cf2432440278e4b02484",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/verify-script-check/contracts.json",
+      "bytes": 705,
+      "sha256": "70648c272aad1268b98f482d802d0dcd981cdc9dd425c4ed7f34388c412671ea",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/verify-script-check/contracts.log",
+      "bytes": 371,
+      "sha256": "b7c72c4243f8fa10104cc4d5341c18d0c2f67131021f1709ff2d7a0a4cc9f293",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/verify-script-check/native-model.log",
+      "bytes": 1545,
+      "sha256": "d39afcf45b345a950ee5cf229b0bd93e1231925e4cd61e5357d863c63816f13c",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/verify-script-check/store.json",
+      "bytes": 5820,
+      "sha256": "31f9ba3038333f9b9029754798b01405a39b484f2ff65f779a8e40572c735d88",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/verify-script-check/store.log",
+      "bytes": 2591,
+      "sha256": "7396904656c94b12de0531bb2b491c6211de737badf7982f7c48f0a605da8a80",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/verify-script-check/syntax-api.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/verify-script-check/syntax-app.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/verify-script-check/syntax-state.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/verify-script-check/syntax-stream.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/verify-script-check/syntax-views.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/verify-script-check/transport.json",
+      "bytes": 6421,
+      "sha256": "337652ef0ecfbff4a8413ca8cedd9288f4809d243a147b571168b46dfeac6def",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/verify-script-check/transport.log",
+      "bytes": 2776,
+      "sha256": "8920679c80aa142838e558e2cb2823faaf5ddee3ebe6c03bc86c71b40b3e869f",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/verify-script-check/verification.json",
+      "bytes": 5699,
+      "sha256": "f82e9b1c9ab71adbae69188ca44a3b1d8a4f2293219815d6a5ce847e9bb82299",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/verify-script-check/web.log",
+      "bytes": 4922,
+      "sha256": "d9b18d6429f80acc58b589f15f1891dd4ee84b5f70f703619852acdb75a4d430",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/windows-full-build-corrected/build.log",
+      "bytes": 3884,
+      "sha256": "b3477c0a56bf90af4fab75afa8325b299320136f0243cb325b43e29e1a47215b",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/windows-full-build-corrected/invocation.json",
+      "bytes": 446,
+      "sha256": "34507acaea839a1ec679806693c7fdd9226b672ef0197418378dc0dd748351e1",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/windows-full-build/build.log",
+      "bytes": 872,
+      "sha256": "440380be6d47ee464f23a2cbe3321c3c8078ab270dcf9f8f2a0d5d58c1a4110a",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/runtime/windows-full-build/invocation.json",
+      "bytes": 535,
+      "sha256": "edc681663dd7b04994099658cd6f861c2160990486738677a1257f8c3f7de4e5",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/script-review.md",
+      "bytes": 4726,
+      "sha256": "63e34f4d462a801cbc8c4d5003210c4f9c840f23524a01265ce7148ce9b27353",
+      "origin": "committed-source"
+    },
+    {
+      "path": "evidence/script-validation.json",
+      "bytes": 4092,
+      "sha256": "0eb726505ee9a1eb2ac934799f8a4a1f877de7f4237e9a80ef9634673e3f88ef",
+      "origin": "committed-source"
+    },
+    {
+      "path": "evidence/script-validation.log",
+      "bytes": 1049,
+      "sha256": "b0658145618052026e0337de1063f1df9686c9abf3a4568240b24bf47dc71428",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/store-review.md",
+      "bytes": 5160,
+      "sha256": "f73dabad5b0c141532322fbdbe211e00c0012f022c02e4f47b21dfffd4e67d26",
+      "origin": "committed-source"
+    },
+    {
+      "path": "evidence/store-tests.json",
+      "bytes": 5822,
+      "sha256": "5e98ab5926422b4bbe30598a334075ef2e27415ca38ba722438e726700677a05",
+      "origin": "committed-source"
+    },
+    {
+      "path": "evidence/store-tests.log",
+      "bytes": 2591,
+      "sha256": "7396904656c94b12de0531bb2b491c6211de737badf7982f7c48f0a605da8a80",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/store-workload.json",
+      "bytes": 5553,
+      "sha256": "6cf0c521e54f7511d0508928fc65fa02c31dda8ece4ff5f642fcff474e71f9ab",
+      "origin": "committed-source"
+    },
+    {
+      "path": "evidence/store-workload.log",
+      "bytes": 1391,
+      "sha256": "b3ca9efead00f19fbdb5221ccf61c41e725a420ff42cae46650a50f7748975cd",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/verifier-helper-validation.json",
+      "bytes": 4401,
+      "sha256": "ad17cd4b3bcf7aa52f7b874060e99fc7fbb9f5560032e2c33b04b131f98519b2",
+      "origin": "committed-source"
+    },
+    {
+      "path": "evidence/verifier-helper-validation.log",
+      "bytes": 1555,
+      "sha256": "129cd8c9e69bebbc0cafab0c13d77bedc7a4ee7641940dfe9f224bfc54214962",
+      "origin": "execution-evidence"
+    },
+    {
+      "path": "evidence/verifier-review.md",
+      "bytes": 8231,
+      "sha256": "9c8bb745c818b792dfe913a2711a50cdfecc15a4ddaf24ab66bcc30083c8c33e",
+      "origin": "committed-source"
+    },
+    {
+      "path": "global.json",
+      "bytes": 105,
+      "sha256": "1611fd8a78391a91ae11893b73f5eb4ab1ba64787a6d492d025a2ca5767de380",
+      "origin": "committed-source"
+    },
+    {
+      "path": "samples/LocalMessaging.ConsoleClient/LocalMessaging.ConsoleClient.csproj",
+      "bytes": 224,
+      "sha256": "dc5ea86b93229ad0bbbd6b1f6b7332b98771954cacec163bdac9002e761687b9",
+      "origin": "committed-source"
+    },
+    {
+      "path": "samples/LocalMessaging.ConsoleClient/Program.cs",
+      "bytes": 15865,
+      "sha256": "b31ac299ae6314975c17518a7cd955dc81e9ecaaad7ef78250c1802a6db76b53",
+      "origin": "committed-source"
+    },
+    {
+      "path": "samples/LocalMessaging.ConsoleClient/README.md",
+      "bytes": 4453,
+      "sha256": "64f7497f8cfb5e33dc7e859521b0d1e4becf196da2c0065c725a474db8e87506",
+      "origin": "committed-source"
+    },
+    {
+      "path": "samples/LocalMessaging.ConsoleClient/packages.lock.json",
+      "bytes": 160,
+      "sha256": "1e4317deb19ab05676f40966e6407485e4b8d5ee178ae23a171388ec37eba87a",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Application/CommandNormalizer.cs",
+      "bytes": 16893,
+      "sha256": "064a437ae129db43851fa12ce2031879c91c538e3ea6b4de612310f61c16c0db",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Application/LocalMessaging.Application.csproj",
+      "bytes": 303,
+      "sha256": "ce081375971c5da7297f89d58d33af2347b5e563a2c124181b68d206f9cd6d2f",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Application/packages.lock.json",
+      "bytes": 163,
+      "sha256": "a18bcf830c4d42f08540fa5a4da9190bf52b4b9d2e7eb4779d4ea61f2c2c24e2",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Client/ImageFileReader.cs",
+      "bytes": 1100,
+      "sha256": "b999efcd0d37619ae4d447d9062a3ce9676b2068fc6b4d4401c3aeaea248956c",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Client/LocalMessaging.Client.csproj",
+      "bytes": 187,
+      "sha256": "e1a91ad3b17614202de10e44136c7dbcc5e9cf97d5dea39cdae0418edeb2e8b9",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Client/MessagingClient.cs",
+      "bytes": 24860,
+      "sha256": "675b2fa013e429d4dc420b6c42a7b6ce3ca3ad595ba5fd478568d74e88afd00e",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Client/SseParser.cs",
+      "bytes": 3903,
+      "sha256": "b221a24805e9bc416ebdeabfa9631f6c95fb927bdfbfebcb15e14971091dd218",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Client/packages.lock.json",
+      "bytes": 88,
+      "sha256": "8d84b21d9bedd16f93b526ec5aa5d9b49b034646d5463195d58ba4617420bc1f",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Contracts/LocalMessaging.Contracts.csproj",
+      "bytes": 143,
+      "sha256": "7baccdf6e27acef5d19d371cc6ccfcda752bdd40a6c8e8334b7c0b8782b02303",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Contracts/Requests.cs",
+      "bytes": 4143,
+      "sha256": "698d0b77055a9d066400f9a45c619f68cc341fbf96627c39012ea3da410fcd42",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Contracts/Responses.cs",
+      "bytes": 1866,
+      "sha256": "997b672d5e69bf4b3a11063547d335a5d5d519585a9dbb3ecaca79f6206df050",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Contracts/ServiceContracts.cs",
+      "bytes": 3186,
+      "sha256": "ce4504b4c70d731a0b1ff31bc7552500631fed4652d424ff716bce3fea918f41",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Contracts/packages.lock.json",
+      "bytes": 88,
+      "sha256": "8d84b21d9bedd16f93b526ec5aa5d9b49b034646d5463195d58ba4617420bc1f",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Host/BoundedLogProvider.cs",
+      "bytes": 2828,
+      "sha256": "de90b9c26c1a1e7bccae5b8e79d32719af67d6a6488fa3d8afb25d696040ce3c",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Host/CertificateProvisioner.cs",
+      "bytes": 4886,
+      "sha256": "e41880b8ee034ca3e7f6a37881156a52a7b126dc2fd7d9de7f2a2b15804b114a",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Host/HostOptions.cs",
+      "bytes": 5133,
+      "sha256": "91cf2b00c893532020523e0ac0a61f2a48edb20d0f51217bd95fd4afc7fb0b7b",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Host/HostRuntime.cs",
+      "bytes": 36746,
+      "sha256": "8eb89b369c1b9b124f6f5978b6647b567b0e95a28959825791b8d16b1adc9f82",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Host/LocalMessaging.Host.csproj",
+      "bytes": 842,
+      "sha256": "67c528482fe1665f058c38ea291ffb5a46cfbb3843fbc24a11eaa535fe55198c",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Host/OpenApiDocument.cs",
+      "bytes": 14021,
+      "sha256": "c6afd58644aafeaac6931e4e1fb7ba5f206f60ab6d3aa424cbad4cbb5d1a2f4e",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Host/Program.cs",
+      "bytes": 3491,
+      "sha256": "672eeefb4af51ff44d1a3fc90dbb596af2522ce41cca3eeab1f3bd2f684d7d32",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Host/StreamRegistry.cs",
+      "bytes": 3698,
+      "sha256": "fa21b8ebfd3a13085a9867adb00f8ac1335a17a9242bdb4d367797056aabae97",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Host/packages.lock.json",
+      "bytes": 4840,
+      "sha256": "ea1631a69456a2b5a7809a0c4708a3786581cd6fd8be18657713ffa684ed3f41",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Infrastructure/DesignTimeFactory.cs",
+      "bytes": 434,
+      "sha256": "438be96e037b3503b6d11c636f885258b7916174c85bdcb0cf83cdf724cd8f06",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Infrastructure/LocalMessaging.Infrastructure.csproj",
+      "bytes": 574,
+      "sha256": "923326b7715b008ce2d58a5e8ff90ea7cd009285339bfb3f9bb5b049a6135ed9",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Infrastructure/MessagingDbContext.cs",
+      "bytes": 12215,
+      "sha256": "9c4e3854007310feb0b1377d55c8f6df50518247f8dae4e49a5c699b31913299",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Infrastructure/MessagingStore.Commands.cs",
+      "bytes": 16957,
+      "sha256": "d048064236af212378d6dfea26688778f2424f617d97f791b08ab726581151db",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Infrastructure/MessagingStore.Queries.cs",
+      "bytes": 23461,
+      "sha256": "371274d08ea088928e4f4e44511ffddfa195c03f77b73d29da0d7ac8e09d16cb",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Infrastructure/MessagingStore.cs",
+      "bytes": 17815,
+      "sha256": "02542b1472063f150ac90af2ba911691a070d6c0f222d36102e2987f50b661fc",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Infrastructure/Migrations/20261120095450_InitialStore.Designer.cs",
+      "bytes": 18959,
+      "sha256": "911768dc66b82a1eaff45f8e7cc121ae63023ff11385b394dfacc5b677693068",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Infrastructure/Migrations/20261120095450_InitialStore.cs",
+      "bytes": 20129,
+      "sha256": "46c2b71ad2042443ea03c7d04a43bdc4406a2212f7cea1fe73dc21c6ab33193c",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Infrastructure/Migrations/MessagingDbContextModelSnapshot.cs",
+      "bytes": 18866,
+      "sha256": "0fff8d89ac15d69e407afc4e4118eaa70c66ef79c840a50e2e6b956ae512ac82",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Infrastructure/StoreMaintenance.cs",
+      "bytes": 9363,
+      "sha256": "4324ec19ccbc9090393141c3e7185f526ddd2ca722ae1c5446cb4f2c70a45a8b",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Infrastructure/packages.lock.json",
+      "bytes": 15492,
+      "sha256": "12c471e94a5800701d9760ddc845f854638bbe92ced38d4aac6d1f85cbfea4a1",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Platform.Windows/LocalMessaging.Platform.Windows.csproj",
+      "bytes": 303,
+      "sha256": "7b6ae86e38cea70deb235530b565e11b77ddcb6d4d2afdb2c3d3fc2d74c00174",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Platform.Windows/WicImageValidator.cs",
+      "bytes": 12141,
+      "sha256": "2f111745ba96bde002d80aadb7c0272550148114c618d03a54eab60b12b01b2a",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Platform.Windows/packages.lock.json",
+      "bytes": 163,
+      "sha256": "a18bcf830c4d42f08540fa5a4da9190bf52b4b9d2e7eb4779d4ea61f2c2c24e2",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Web/README.md",
+      "bytes": 3278,
+      "sha256": "cffa8a3dcfbcfa6e6a9c705e5cb38df4f7f4eb165a12243b5abdd6e6449ed085",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Web/api.js",
+      "bytes": 6687,
+      "sha256": "af314a108f496faacd0702c515b70a52b1ad955684440f3f278438a9fc22934e",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Web/app.js",
+      "bytes": 38294,
+      "sha256": "97e608d651b2037c97e65a2e779fb1ee7f65c0ce1e78340003eb1c27e5e63f47",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Web/browser-integration-result.json",
+      "bytes": 662,
+      "sha256": "e4762dfe830cef2afc3f4d0a7982de70de01dafacd58a610aebc546c1fd81129",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Web/favicon.svg",
+      "bytes": 164,
+      "sha256": "e018630e8ecc5f1ef1c69c532d26b66cf4e42a7f4e14810ab67bdc380c60e581",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Web/index.html",
+      "bytes": 9080,
+      "sha256": "0099eb838a97766d317c36ba4f865f8677e4cf965e8337e0a0971d6b8fd3675a",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Web/package.json",
+      "bytes": 153,
+      "sha256": "3c05ec0a7fbdf4b87ef16e87d131050b500c095fbe3496c484a97f8d787110d2",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Web/state.js",
+      "bytes": 3592,
+      "sha256": "fb34ca68fc5fce2598e83540b1ea3d076faf5c2633ccefbe2f0921e3b542dff3",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Web/stream.js",
+      "bytes": 9051,
+      "sha256": "13ff2b0a29a45071c22202a6b163e77ebc251a03dcdc4d238373e07d15248fa2",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Web/styles.css",
+      "bytes": 15738,
+      "sha256": "2d4bdd4026a3d15580e79d303fd67383fd39558f6953f90ffd55be48d6478acd",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Web/tests/api.test.js",
+      "bytes": 4596,
+      "sha256": "04ac3c1ca2f5d5ec7e06b05c6589072e2bc8f6c68f766dcf69337016b73f2eed",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Web/tests/browser-scenario.mjs",
+      "bytes": 13548,
+      "sha256": "5172beb8abad8050b235b976c23ee596fff04704d59bea91d427f66fedf1cac9",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Web/tests/state.test.js",
+      "bytes": 3404,
+      "sha256": "7f9fd133457724213c4cd21e515e2d78909b802b56bce9b0e5920fe0c44bbe57",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Web/tests/stream.test.js",
+      "bytes": 8292,
+      "sha256": "1a73d627fc23c7ed2140eaa6269b9df550ac9fd025c68f2b364ce78a4dcf1b06",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.Web/views.js",
+      "bytes": 11157,
+      "sha256": "5dff42a87b5e0507e73293467130e45baf4ee1a9591ee7f8c5a9fc42d7db0308",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.WinUI/BUILD-NOTES.md",
+      "bytes": 3369,
+      "sha256": "5b75dcb75208b76e4eee36a1f6965d4a3f587e894945798fdeba76191460212d",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.WinUI/LocalMessaging.WinUI.csproj",
+      "bytes": 1257,
+      "sha256": "1644850cfba6e5196c959b45116366de150849db5b7ec7d7983779a7527bf8a8",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.WinUI/MainWindow.cs",
+      "bytes": 42651,
+      "sha256": "df32d02f0b0561e2cc12da0f6b53eb76de734e5fe330db8c257312d45f13f6c4",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.WinUI/NativeOptions.cs",
+      "bytes": 1054,
+      "sha256": "51520fcf933af16db4819a2bf7006dd53b1e5812fac7b36d16afe039733ab163",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.WinUI/Program.cs",
+      "bytes": 1209,
+      "sha256": "95ddea80cb4cc3973c815295bffe90c9f118f13cd56c77f3209217c862e80d4e",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.WinUI/ShellViewModel.cs",
+      "bytes": 27200,
+      "sha256": "f56355bdcc177d629c3bd319414ca5a306c64d430091a492546043c0454364a5",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.WinUI/ThreadProjection.cs",
+      "bytes": 3798,
+      "sha256": "dad53580e5fb2940d0f85660bc1890f3a0932b6e8df70a1aee35d5dd30d16df6",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.WinUI/app.manifest",
+      "bytes": 767,
+      "sha256": "0ce52950ea876d375f03c6164926b674c60e4e0d04813cf38793a4b4a8c5ca51",
+      "origin": "committed-source"
+    },
+    {
+      "path": "src/LocalMessaging.WinUI/packages.lock.json",
+      "bytes": 7001,
+      "sha256": "95f7564b8ae384a07caf98a020560ae9c6b49277e87edaf090b105adaef67221",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.ClientTests/LocalMessaging.ClientTests.csproj",
+      "bytes": 336,
+      "sha256": "cf634e56e5f2710e1e711acd40cd66fc4514af03372451688976c3bd8fa00f8d",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.ClientTests/Program.cs",
+      "bytes": 19486,
+      "sha256": "8eff47fed416727c6c675f31c935bee2eec9a550deaba963606475cd9f1c4e0f",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.ClientTests/packages.lock.json",
+      "bytes": 160,
+      "sha256": "1e4317deb19ab05676f40966e6407485e4b8d5ee178ae23a171388ec37eba87a",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.NativeModelTests/LocalMessaging.NativeModelTests.csproj",
+      "bytes": 635,
+      "sha256": "dc517754e76a06b535f3434caa54211f896b6854c8b47a1006ef1087e5f418f9",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.NativeModelTests/Program.cs",
+      "bytes": 14434,
+      "sha256": "459a50fdf07940d060cd60044ae143f0c7ad342fd6bd277dac1891a60cf5f0e6",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.NativeModelTests/packages.lock.json",
+      "bytes": 160,
+      "sha256": "1e4317deb19ab05676f40966e6407485e4b8d5ee178ae23a171388ec37eba87a",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.Platform.WindowsTests/Fixtures/animated.png",
+      "bytes": 109,
+      "sha256": "7f7dd37be2fda5a91121465856b3b16cba309c79fef1968c106de23e39aaf4cf",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.Platform.WindowsTests/Fixtures/corrupt-crc.png",
+      "bytes": 89,
+      "sha256": "3d005637c49cc3ab0770b59e70d2f2547f9b511a9bbc50061349fc7da7f40101",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.Platform.WindowsTests/Fixtures/dimensions.png",
+      "bytes": 89,
+      "sha256": "c37eac04ec0d9f2bfe6b96cd3f1c3038906e2b03913b48282c3d204b60d19959",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.Platform.WindowsTests/Fixtures/truncated.jpg",
+      "bytes": 636,
+      "sha256": "1cfc827284a48114d601a8730b9291c6fd2312a8c7cfa7f853dfee8e173b94cb",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.Platform.WindowsTests/Fixtures/valid.jpg",
+      "bytes": 638,
+      "sha256": "9a283231ddb88ca7a254e6f9a71f8d87d59a05b90d370249c15a5cb7cc1a6b83",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.Platform.WindowsTests/Fixtures/valid.png",
+      "bytes": 89,
+      "sha256": "06feab8644b22188b732731eb030634e532127b4b708544dbd0b52c2ccead6c0",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.Platform.WindowsTests/LocalMessaging.Platform.WindowsTests.csproj",
+      "bytes": 369,
+      "sha256": "2dc238b8c45f88358aad9e1962f722a6fda2abcbc76a383b4ad7a9d71760908e",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.Platform.WindowsTests/Program.cs",
+      "bytes": 3056,
+      "sha256": "867fce73498cb0bce2c9c8ddd0bd1770487f54c76f7813fd34d21a630da557d2",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.Platform.WindowsTests/packages.lock.json",
+      "bytes": 328,
+      "sha256": "a3548eb954ab63e0340fc3a4e8ffe44d534368105cc76bdaf9dc86c7be966d61",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.Scenarios/HostReviewChecks.cs",
+      "bytes": 5810,
+      "sha256": "337907fc6e2f1dbb0efe66e0f17a31fb08e0f38aef6f59fd8e7da6218c62d7a6",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.Scenarios/LocalMessaging.Scenarios.csproj",
+      "bytes": 397,
+      "sha256": "0a11e3c8799ce279d9ae64b49bcbaaf804a9f8d3efe5beb2cfc2f82b4247c66e",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.Scenarios/Program.cs",
+      "bytes": 28894,
+      "sha256": "88c2d4b0cbdbc64dbe01c278e48b517c6a928057f0d22177533ef600ee368fe2",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.Scenarios/PublishedQualification.cs",
+      "bytes": 32290,
+      "sha256": "ed596ea30ae04790c5f2dcbb350aaeda47569052e4cb6ec7779c8d90d49ff1d2",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.Scenarios/StreamQualification.cs",
+      "bytes": 9682,
+      "sha256": "e66f47cc66c2da5ad880ddbbbedad7df9af725e65c29af0768c61ec48f3bf50c",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.Scenarios/fixtures/sample.jpg",
+      "bytes": 662,
+      "sha256": "683be7392b73714449b14c3e51e4cf9057dfe06eee8a57fc430d28eb55895999",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.Scenarios/fixtures/sample.png",
+      "bytes": 79,
+      "sha256": "ab840f8c2082d66b8a3fecf856fe3ab2e8cf7c2efa30f48222d5cc9703baf8ce",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.Scenarios/packages.lock.json",
+      "bytes": 9108,
+      "sha256": "ac9bfb87ffe55c642025b69c58590f5f61ae18de9abf8dee7f37fcda63ce86ef",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.StoreTests/LocalMessaging.StoreTests.csproj",
+      "bytes": 395,
+      "sha256": "75796139db6ebd87ab0f2554ed211133a4d5c3b5ae7ffe6e99d0ef4817816b15",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.StoreTests/Program.cs",
+      "bytes": 44946,
+      "sha256": "976e4e1fd1da9bf78648eca71cc3b66876d796678f05fdba421840410a292117",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.StoreTests/Workload.cs",
+      "bytes": 14257,
+      "sha256": "4ebaba3054b3587f29c9ec6a74b6b68c85b72721b4741d37156b7a133c35d5d4",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.StoreTests/packages.lock.json",
+      "bytes": 15784,
+      "sha256": "694df4f955de70e17fa2290648a0e3c2ccb79bbcd9a2cc47f82e629184d19a7c",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.Verify/LocalMessaging.Verify.csproj",
+      "bytes": 385,
+      "sha256": "db50b6f4a271f0e81dbce16e39378178140bb0f63835b7b7a1771a04d908df8c",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.Verify/Program.cs",
+      "bytes": 17973,
+      "sha256": "2167c674d7be7ca902367dde8907d8ad19464795bffe41386095221d1280dc12",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.Verify/packages.lock.json",
+      "bytes": 9309,
+      "sha256": "6cf150a20193dbb3b92516f66b870a6be24f3a6883023133e2abe508da943627",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/LocalMessaging.WinUI.Manual.md",
+      "bytes": 6699,
+      "sha256": "98c35efbfbe5c1476a8a3cd3e235316b7a49f1ee070eec982f015b8c83403e4f",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/validate-operator-scripts.ps1",
+      "bytes": 8091,
+      "sha256": "240c11e0819767076ab52dacb22723809c5235d6c352c2b4f30aed55322e9493",
+      "origin": "committed-source"
+    },
+    {
+      "path": "tests/validate-verifier-guards.ps1",
+      "bytes": 8450,
+      "sha256": "0ece54a22512d07a92f748ed413c2abba3d46b7c658dc121059f3e4d95484d56",
+      "origin": "committed-source"
+    },
+    {
+      "path": "source-history.bundle",
+      "bytes": 472337,
+      "sha256": "ada5df8f3b1dcd6a6edd2c0eefede306361a4085314a5e9b3bfa6737e856a325",
+      "origin": "git-bundle"
+    }
+  ],
+  "inventoryNote": "Every payload file is listed. This manifest excludes its own digest to avoid a circular hash."
+}

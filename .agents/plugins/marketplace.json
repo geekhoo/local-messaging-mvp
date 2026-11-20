@@ -1,0 +1,12 @@
+{
+  "name": "local-messaging-workspace",
+  "interface": { "displayName": "Local Messaging Workspace" },
+  "plugins": [
+    {
+      "name": "local-messaging",
+      "source": { "source": "local", "path": "./plugins/local-messaging" },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+      "category": "Productivity"
+    }
+  ]
+}

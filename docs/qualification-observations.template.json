@@ -1,0 +1,2007 @@
+{
+  "schemaVersion": 1,
+  "candidateCommit": "REPLACE_WITH_EXACT_PRODUCT_COMMIT",
+  "manifestSha256": "REPLACE_WITH_SHA256_OF_PRODUCT_MANIFEST",
+  "reviewer": "",
+  "observedAtUtc": "",
+  "environment": {
+    "osDescription": "",
+    "windowsBuild": "",
+    "architecture": "x64",
+    "cleanMachine": false,
+    "noDevelopmentSdk": false,
+    "noNode": false
+  },
+  "checks": [
+    {
+      "id": "A02",
+      "required": "Close both frontends → Host remains running; native pub/sub still works",
+      "result": "not_run",
+      "steps": [],
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "A07",
+      "required": "Browser uses loopback HTTP/1.1 → Full functionality without browser HTTP/3 certificate requirements",
+      "result": "not_run",
+      "steps": [],
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "A33",
+      "required": "Send an HTML-looking text payload → Displayed as text in both clients",
+      "result": "not_run",
+      "steps": [],
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "A37",
+      "required": "Backup and official restore → Domain/images/receipts coherent; epoch rotates; clients resynchronize",
+      "result": "not_run",
+      "steps": [],
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "A39",
+      "required": "Same end-to-end scenario in WinUI and web → Equivalent objects, ownership, targets, threads, and errors",
+      "result": "not_run",
+      "steps": [],
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "A40",
+      "required": "Switch profile while a send is unresolved → Original caller retained; no relabelled send/subscription",
+      "result": "not_run",
+      "steps": [],
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "A41",
+      "required": "Fragment SSE across arbitrary byte boundaries → Correct UTF-8/frame parsing and cursor advancement",
+      "result": "not_run",
+      "steps": [],
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "A42",
+      "required": "Clean supported Windows VM → Self-contained host/WinUI start; webapp works without Node/CDN",
+      "result": "not_run",
+      "steps": [],
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "A43",
+      "required": "Select another profile without credentials → Same creation/viewing abilities; ownership adds no privilege",
+      "result": "not_run",
+      "steps": [],
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "A47",
+      "required": "Cross-origin web form/fetch/image attempts → API origin/header protections hold; same-origin app still works",
+      "result": "not_run",
+      "steps": [],
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "A48",
+      "required": "Shutdown during normal operation → Bounded drain; surviving committed commands recover by receipt",
+      "result": "not_run",
+      "steps": [],
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "A50",
+      "required": "Windows proxy/PAC configured → Supplied local clients and readiness probe still connect directly to loopback",
+      "result": "not_run",
+      "steps": [],
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    }
+  ],
+  "criteria": [
+    {
+      "id": "T001-AC01",
+      "required": "A fresh checkout restores pinned dependencies and builds every introduced project in Release with zero build/restore/analyzer warnings.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T001-AC02",
+      "required": "The actual host process starts and exits cleanly; an actual WinUI window opens and closes on the declared Windows target.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T001-AC03",
+      "required": "The scenario harness is runnable and reports environment, candidate commit, command, exit status, and unimplemented capability state.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T001-AC04",
+      "required": "The verifier rejects unknown IDs and unimplemented checks; it cannot report a missing runner or skipped execution as PASS.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T001-AC05",
+      "required": "Product web assets need no frontend framework or Node dependency; no domain feature is falsely declared complete.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T002-AC01",
+      "required": "Every valid fixture round-trips without loss and every invalid discriminator, unknown request property, or contradictory selector fails predictably.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T002-AC02",
+      "required": "UUIDs, string-encoded sequences, UTC timestamps, caller bootstrap rules, and receipt versus subscription state match the specification.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T002-AC03",
+      "required": "Canonical image request hashing inputs are documented as normalized request fields plus verified image-byte digest; boundary and filename do not change identity.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T002-AC04",
+      "required": "Omitted/default/empty option normalization is deterministic; target-ID ordering does not produce a different canonical request hash.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T002-AC05",
+      "required": "Fixture execution calls the actual contract code and exits nonzero on a mismatch; no required contract field is inferred from a shortened example.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T003-AC01",
+      "required": "The messaging probe uses RequestVersionExact=3.0 and verifies response.Version=3.0; a TCP-only port check is never accepted as QUIC proof.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T003-AC02",
+      "required": "Frontend HTTP/1.1 responds independently; the browser is not required to trust a self-signed HTTP/3 certificate.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T003-AC03",
+      "required": "Wrong pin, hostname mismatch, expiry, unavailable QUIC, and occupied configured ports fail clearly with no false-ready descriptor.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T003-AC04",
+      "required": "A restart loads a persisted private key and native clients reject arbitrary certificates; no accept-any validation is present.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T003-AC05",
+      "required": "The self-probe runs after server binding and bypasses configured Windows proxy/PAC settings.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T003-AC06",
+      "required": "Probe results are marked supporting transport evidence, not final completion of persisted-publication A03 or durable-subscription A04.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T004-AC01",
+      "required": "Valid-authority wrong-surface requests return 404; invalid authority returns 400; Host spoofing cannot switch surfaces.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T004-AC02",
+      "required": "Static/default assets are available only on the frontend listener.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T004-AC03",
+      "required": "Cross-origin/null-Origin browser mutations and simple form posts without required header are rejected before any handler side effect.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T004-AC04",
+      "required": "Same-origin browser fetch and native requests with the required header succeed through permitted routes.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T004-AC05",
+      "required": "No wildcard CORS, all-interface binding, unsafe forwarded-host trust, or unbounded request parsing is introduced.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T005-AC01",
+      "required": "Starting with an empty directory applies migrations; reopening preserves the same store epoch, schema, and data.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T005-AC02",
+      "required": "A competing host cannot independently use the same store; unrelated occupied ports/data are not overwritten.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T005-AC03",
+      "required": "Effective SQLite FK, WAL, synchronous, and timeout settings match the design and are verified using the real provider.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T005-AC04",
+      "required": "Required FK/composite-parent/root/unique/check constraints exist and are exercised with real SQLite fixtures.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T005-AC05",
+      "required": "Migration or initialization failure prevents application readiness and never silently recreates the store; EnsureCreated is not mixed with migrations.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T005-AC06",
+      "required": "Contexts and connections are not shared across concurrent units of work; readiness descriptor contains the actual persistent epoch.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T006-AC01",
+      "required": "Valid PNG/JPEG files decode completely and produce verified format, dimensions, byte length, and SHA-256 metadata.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T006-AC02",
+      "required": "The runner works in the unpackaged headless host context without HWND/MSIX/WinUI dependence.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T006-AC03",
+      "required": "Disallowed type, malformed data, animation, excessive bytes/dimensions/pixels, and arithmetic overflow are rejected.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T006-AC04",
+      "required": "Concurrency is bounded at two validations and buffers/native resources are released after success or failure.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T006-AC05",
+      "required": "Component evidence is labeled supporting A31 evidence; the full persisted image API is not claimed complete until T016.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T007-AC01",
+      "required": "One valid command creates exactly one user, one user.created event, and one committed receipt.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T007-AC02",
+      "required": "Same normalized request ID/payload returns the same user and event count, including after restart.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T007-AC03",
+      "required": "Changed payload/caller/operation under an existing request ID returns 409 without writes.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T007-AC04",
+      "required": "Handle normalization and uniqueness, bounds, and null/absent caller rules behave exactly as specified.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T007-AC05",
+      "required": "Both surfaces use one handler and equivalent contracts; selecting/creating a user requires no authentication.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T007-AC06",
+      "required": "Targets/parents/images/coupled-subscribe features not implemented yet cannot be silently ignored by other command variants.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T008-AC01",
+      "required": "Every accepted channel create produces exactly one channel and one initial session, both owned by the caller.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T008-AC02",
+      "required": "A supplied first-session title is preserved; omission uses General.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T008-AC03",
+      "required": "The event order is channel then session; the receipt distinguishes resolved objects from newly created objects.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T008-AC04",
+      "required": "Any invalid initial-session/channel input rolls back all objects, events, and receipt.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T008-AC05",
+      "required": "Same-request retries return original IDs; unknown caller IDs do not create users or containers implicitly.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T008-AC06",
+      "required": "The new IDs are queryable through both surfaces and are suitable subscription scopes once subscriptions are implemented.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T009-AC01",
+      "required": "User B can create a session in A's channel; the channel remains owned by A and the new session is owned by B.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T009-AC02",
+      "required": "A session command selecting a new channel creates one channel and exactly one session.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T009-AC03",
+      "required": "Unknown existing channel IDs return 404; conflicting selector fields are rejected without implicit creation.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T009-AC04",
+      "required": "All objects/events/receipt commit atomically with stable IDs on retry.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T009-AC05",
+      "required": "Any logical user has the same create/view capabilities regardless of recorded owner.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T010-AC01",
+      "required": "Existing channel/session text creates only the message; new-session and new-channel forms create the intended graph with correct ownership.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T010-AC02",
+      "required": "Root messages have null parent, own root ID, depth 1, caller author, and committed string sequence.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T010-AC03",
+      "required": "Invalid or mismatched existing references, whitespace-only text, oversize input, and unauthorized write fields leave zero partial writes.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T010-AC04",
+      "required": "Channel/session/message creation events are ordered and invisible before commit.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T010-AC05",
+      "required": "Retrying an unchanged request returns original IDs and does not append new events.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T010-AC06",
+      "required": "Nonempty targets, parent IDs, image content, or coupled subscription options remain explicitly unavailable until their implementing task passes.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T011-AC01",
+      "required": "A genuine H3 command commits a message and reports response.Version 3.0; querying the stored message proves the real handler was used.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T011-AC02",
+      "required": "The same command retried through F returns the same created IDs and no extra rows/events.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T011-AC03",
+      "required": "Receipt queries return committed state and operation; no visible receipt maps to request_not_committed without proving a request could never commit.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T011-AC04",
+      "required": "Location/relative paths derive from the configured accepted surface and cannot be poisoned by Host.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T011-AC05",
+      "required": "Errors and body validation are consistent across M/F; normal-operation diagnostics are clean.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T012-AC01",
+      "required": "Failure before commit leaves no graph/receipt/event; failure after commit returns the original result on retry.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T012-AC02",
+      "required": "Concurrent identical requests yield one committed result; conflicting uses of the same ID yield deterministic conflict.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T012-AC03",
+      "required": "Concurrent distinct requests remain consistent with required FKs, event order, and no shared-context errors.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T012-AC04",
+      "required": "Write wait/provider timeout is finite and returns the specified retryable error while preserving the original retry identity.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T012-AC05",
+      "required": "The fault scenario runs repeatedly with explicit synchronization points, not timing-only sleeps; expected injected failures are distinguished from unexpected diagnostics.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T013-AC01",
+      "required": "Users, channels, and sessions can be listed and retrieved through both surfaces with correct independent owner fields.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T013-AC02",
+      "required": "Paging at H neither includes later creations nor skips/duplicates eligible earlier objects.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T013-AC03",
+      "required": "Page tokens preserve the snapshot/filter/order and reject malformed or wrong-epoch data.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T013-AC04",
+      "required": "Default/max page sizes are enforced; any counts use the same H.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T013-AC05",
+      "required": "Catalog tests are supporting snapshot evidence; full snapshot-plus-replay A23 remains open until T024.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T014-AC01",
+      "required": "Known handles and explicit IDs produce one canonical target set; duplicate sources create one MessageTargets row.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T014-AC02",
+      "required": "Unknown syntactically valid handles or nonexistent explicit IDs fail the complete compound request with the specified error.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T014-AC03",
+      "required": "Escaped/email/invalid-short/overlong/leading-digit cases follow the exact frozen grammar.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T014-AC04",
+      "required": "Mentions history returns each targeted message once with correct ordering/snapshot semantics.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T014-AC05",
+      "required": "Other logical users still see the message in session history; targeting adds routing and does not imply privacy.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T014-AC06",
+      "required": "Caption targeting uses the same parser when image commands become available; no second inconsistent parser is introduced.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T015-AC01",
+      "required": "Root/reply/nested reply produce depths 1/2/3 and correct common root IDs.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T015-AC02",
+      "required": "Replying to level 3 or a message in another session fails with zero object/event/receipt writes.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T015-AC03",
+      "required": "Clients cannot override author, depth, root, or timestamps.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T015-AC04",
+      "required": "Small thread pages return needed ancestors without inventing detached roots or duplicating context.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T015-AC05",
+      "required": "Replies have only their own explicit/textual targets and remain publicly viewable.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T015-AC06",
+      "required": "Self-root insertion and composite parent/root FKs work against real SQLite, not only mocked storage.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T016-AC01",
+      "required": "Valid PNG/JPEG messages work in existing/new container combinations and return bytes matching the stored digest.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T016-AC02",
+      "required": "The 8 MiB binary/9 MiB request, dimension/pixel, part-count, and decoder bounds are enforced with actionable errors.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T016-AC03",
+      "required": "Invalid image/target/parent input leaves no orphan image or partially created conversation.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T016-AC04",
+      "required": "Equivalent retries with the same bytes and canonical JSON return the original result despite filename/boundary changes; changed bytes conflict.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T016-AC05",
+      "required": "Event, receipt, and history JSON contain descriptors only; no binary/base64 or local file path leaks.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T016-AC06",
+      "required": "Image content is fetched after bounded database materialization and response concurrency never exceeds the configured limit.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T017-AC01",
+      "required": "Root and flat views return their specified membership/order; all detail/history DTOs agree for the same message.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T017-AC02",
+      "required": "Queries at H exclude later roots/replies and counts use H; continuation never loses or duplicates eligible messages.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T017-AC03",
+      "required": "Thread context is bounded to required ancestors and does not consume the requested item limit.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T017-AC04",
+      "required": "Image-bearing rows are projected without fetching BLOB bytes for ordinary history.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T017-AC05",
+      "required": "Query/page limits and epoch/head checks are enforced before materializing unbounded data.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T017-AC06",
+      "required": "Navigation by a message ID resolves its proper thread/session even when its root is outside the current history page.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T018-AC01",
+      "required": "OpenAPI and returned objects agree on required fields, discriminators, sequence encoding, receipt operation/state, and content shapes.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T018-AC02",
+      "required": "Every specified content/query route is reachable on its correct surface and guarded before handler execution.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T018-AC03",
+      "required": "No domain PATCH/PUT/DELETE operation exists; unsupported methods receive the documented outcome.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T018-AC04",
+      "required": "Multipart and JSON requests enforce declared limits, origin/header rules, and stable Problem Details across M/F.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T018-AC05",
+      "required": "Image bytes stay out of all JSON contracts; caller-supplied server-owned fields are rejected.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T018-AC06",
+      "required": "The executable matrix fails on a missing route/schema check and leaves the current cumulative build runnable.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T019-AC01",
+      "required": "Create returns an inspectable persisted definition and correct numeric start head for each supported mode.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T019-AC02",
+      "required": "Subscription definition and historical receipt survive restart; create/close retries do not create extra subscriptions.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T019-AC03",
+      "required": "Close preserves queryable metadata; new consumption returns 410, and mismatched supplied closer is rejected by the specified correctness rule.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T019-AC04",
+      "required": "Unknown filter IDs, empty filters, malformed/future/wrong-epoch cursors, and oversized filter sets fail correctly.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T019-AC05",
+      "required": "Create/close does not generate domain events; a closed historical subscription is not recreated by a command retry.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T019-AC06",
+      "required": "Live connection count is zero when no stream is attached and is explicitly transient rather than a delivery acknowledgement.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T020-AC01",
+      "required": "Overlapping branches return one logical event in ascending sequence order.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T020-AC02",
+      "required": "An empty sparse page can advance nextCursor; iteration reaches the captured head without repeated scanning or missed matches.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T020-AC03",
+      "required": "No nextCursor skips a matching event excluded by count or byte budget.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T020-AC04",
+      "required": "At most 1,000 headers, requested bounded items, and 1 MiB matching payloads are processed per batch; one allowed event can always make progress.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T020-AC05",
+      "required": "All cursor error codes and conflicting cursor inputs behave as specified.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T020-AC06",
+      "required": "Image events carry descriptors only and no query retains a context while a consumer waits.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T021-AC01",
+      "required": "Channel creation can resolve its automatically created initial session; session/message variants resolve their selected/new containers correctly.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T021-AC02",
+      "required": "beforeRequest starts before the command's own events, allowing relevant creation events to be queried.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T021-AC03",
+      "required": "An invalid coupled scope or any failing object validation leaves no subscription or partial graph.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T021-AC04",
+      "required": "A replay returns the original subscription reference even if it is now closed; it never reopens/replaces it.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T021-AC05",
+      "required": "Request ID conflicts are enforced across object create, subscription create, and close, including nullable bootstrap caller.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T021-AC06",
+      "required": "User bootstrap rejects subscribe; ordinary sends can omit it without creating a new saved subscription.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T022-AC01",
+      "required": "Exact-H3 subscription responses have Version 3.0 and deliver actual committed events after transaction commit.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T022-AC02",
+      "required": "Frontend consumers receive equivalent event framing and payloads over HTTP/1.1.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T022-AC03",
+      "required": "Replay transitions to live delivery without skipping events; channel subscriptions include future sessions and catalog subscriptions see new containers.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T022-AC04",
+      "required": "Checkpoint IDs advance only after prior matching events are flushed; comments/control events obey their cursor rules.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T022-AC05",
+      "required": "Quiet streams receive heartbeats, and cancellation disposes stream resources.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T022-AC06",
+      "required": "No context/reader/transaction is kept open while waiting for a client, and established SSE does not receive an appended JSON error document.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T023-AC01",
+      "required": "Two consumers of one subscription replay independently; no shared cursor causes one to steal events.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T023-AC02",
+      "required": "A close/attach race cannot leave an indefinitely live closed subscription; already transmitted frames are handled according to documented semantics.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T023-AC03",
+      "required": "A slow/stalled receiver is bounded/closed, releases resources, and cannot indefinitely block ordinary publishers.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T023-AC04",
+      "required": "Commit-after-empty-read and crash-after-commit-before-wake scenarios lose no committed matching event after recovery.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T023-AC05",
+      "required": "Registry counts return to baseline after detach/timeout; query metadata reports actual current connections.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T023-AC06",
+      "required": "Actual subscription/stream routes preserve listener isolation and deduplicate overlapping filters.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T023-AC07",
+      "required": "The deterministic scenarios use synchronization hooks confined to verification tooling and produce no unexpected normal-operation warnings.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T024-AC01",
+      "required": "The same client supports F and explicit M mode, with actual exact-H3 evidence and no proxy detour.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T024-AC02",
+      "required": "Uncertain text/image/coupled sends retry the original caller/request/payload and reconcile the committed result.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T024-AC03",
+      "required": "Snapshot plus concurrent publication/replay produces the complete committed view without duplicate applied messages.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T024-AC04",
+      "required": "Split UTF-8/CRLF/multiline frames parse correctly; keepalive bytes prevent false idle reconnects.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T024-AC05",
+      "required": "There is one reconnect loop per subscription with bounded jitter/backoff, cancellation, and Retry-After handling.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T024-AC06",
+      "required": "Epoch mismatch/future cursor/closed subscription produces explicit resynchronization rather than a silent wait.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T024-AC07",
+      "required": "The runnable sample uses real host/SQLite behavior; parser-only fixtures are supporting evidence for later dual-frontend A41 closure.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T025-AC01",
+      "required": "An empty store offers Create User and the selected profile is retrieved again after reload without any login flow.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T025-AC02",
+      "required": "Channel/session directories are queryable and owner labels remain distinct.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T025-AC03",
+      "required": "All API requests include the required header and same-origin policy; no CDN/framework/Node runtime is required.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T025-AC04",
+      "required": "Message/user-provided labels are rendered through safe text nodes; browser console has no unexpected errors/warnings.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T025-AC05",
+      "required": "The active caller is per tab; another tab's localStorage change cannot switch it automatically.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T026-AC01",
+      "required": "A creates exactly one initial session with a new channel; B creates a session there without changing the channel owner.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T026-AC02",
+      "required": "Sent root text persists, reloads, and displays author/targets/content through canonical DTOs.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T026-AC03",
+      "required": "Uncertain retries reuse the same request identity; editing a failed draft allocates a new ID.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T026-AC04",
+      "required": "Validation failures preserve the draft and show field-specific errors; Sent means committed, not read/delivered.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T026-AC05",
+      "required": "HTML-looking content renders literally and never creates executable DOM.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T026-AC06",
+      "required": "Loaded root pages remain bounded and chronological display does not corrupt pagination order.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T027-AC01",
+      "required": "Root/reply/nested reply render as three levels; Reply is disabled at level 3 and backend rejection is still surfaced.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T027-AC02",
+      "required": "Pagination supplies missing ancestors and never displays a nested reply as a new root.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T027-AC03",
+      "required": "Known mentions/explicit targets display consistently; unknown recognized handles preserve the draft and show their error.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T027-AC04",
+      "required": "Mentions show only matching targets for the selected profile; public session history remains visible to others.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T027-AC05",
+      "required": "Reply targets are not silently inherited; target chips derive from canonical server IDs.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T027-AC06",
+      "required": "The flow remains keyboard-usable with visible focus and labelled controls.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T028-AC01",
+      "required": "Valid PNG/JPEG with optional caption sends and reloads from the persisted image content route.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T028-AC02",
+      "required": "Invalid/oversized content produces the server error and preserves the editable draft.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T028-AC03",
+      "required": "Retries use unchanged bytes/caller/request ID even when the transport multipart boundary changes.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T028-AC04",
+      "required": "Ordinary JSON/event/history contains descriptors only, with no base64 or file path.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T028-AC05",
+      "required": "Object URLs and obsolete image loads are disposed, and concurrent fetching stays bounded.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T028-AC06",
+      "required": "No returned text or image filename is inserted as unsafe HTML.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T029-AC01",
+      "required": "Split UTF-8 and CR/LF/CRLF/multiline SSE fixtures and real streams apply correctly; heartbeat comments keep quiet connections alive.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T029-AC02",
+      "required": "Publishing during initial load and response/event reordering produce a complete view with one visible canonical message.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T029-AC03",
+      "required": "Profile switches never relabel pending sends; closing the old subscription does not affect other clients.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T029-AC04",
+      "required": "Another tab's storage events cannot change the active caller, and cloned/reloaded tabs do not take exclusive ownership of a shared subscription.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T029-AC05",
+      "required": "Connection loss shows useful state; reconnect is bounded, honors Retry-After, and stops on cancellation or unsupported contract.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T029-AC06",
+      "required": "Store-epoch change clears scoped state, revalidates profile IDs, and reloads history.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T029-AC07",
+      "required": "The browser completes every implemented feature using the frontend listener without browser HTTP/3 dependence.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T030-AC01",
+      "required": "The native app opens on the qualified Windows target and creates/selects real profiles without authentication.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T030-AC02",
+      "required": "Catalog data and ownership come from API DTOs; the native process never opens SQLite.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T030-AC03",
+      "required": "UI interaction remains responsive during network work and obsolete loads are cancelled.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T030-AC04",
+      "required": "Closing the native window disposes its connection work without stopping the host.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T030-AC05",
+      "required": "Unavailable host errors are actionable and do not launch any path supplied by untrusted endpoint metadata.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T030-AC06",
+      "required": "Basic focus order, control labels, and keyboard navigation work.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T031-AC01",
+      "required": "Native channel creation produces exactly one initial session; B's new session does not change A's channel ownership.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T031-AC02",
+      "required": "Committed text survives reopening and is rendered literally, including HTML-looking input.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T031-AC03",
+      "required": "An uncertain retry produces one committed/visible message with its original author and request ID.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T031-AC04",
+      "required": "Validation failures preserve drafts and show specific errors; an edited draft receives a new request ID.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T031-AC05",
+      "required": "Network/image-independent background work does not block the dispatcher or leave obsolete selection results in the active view.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T032-AC01",
+      "required": "Three total message levels render correctly and level-4 replies are unavailable/rejected.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T032-AC02",
+      "required": "A nested message reached from Mentions resolves the correct thread without creating a false root.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T032-AC03",
+      "required": "Canonical target IDs, unknown-handle errors, and reply target behavior match the shared contract scenario; replies do not inherit targets.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T032-AC04",
+      "required": "Other profiles retain visibility of targeted conversation history.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T032-AC05",
+      "required": "The native UI uses the same contracts and no extra ownership restrictions.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T032-AC06",
+      "required": "Keyboard operation and focus remain usable through target selection and reply cancellation.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T033-AC01",
+      "required": "The picker works in the unpackaged WinUI app and valid PNG/JPEG messages send and reload.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T033-AC02",
+      "required": "Errors from invalid/oversized files preserve the draft and show the server's reason.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T033-AC03",
+      "required": "Retry identity includes the unchanged image bytes, original caller, and request ID.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T033-AC04",
+      "required": "No image BLOB is fetched through ordinary JSON, and no UI-thread database/network blocking is introduced.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T033-AC05",
+      "required": "Image objects/streams are disposed when no longer needed, with bounded concurrent loads.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T033-AC06",
+      "required": "Native image behavior matches the shared image contract, validation corpus, and payload limits.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T034-AC01",
+      "required": "Publishing during initial load or reconnect yields complete canonical state with no duplicate visible messages.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T034-AC02",
+      "required": "Quiet heartbeats remain healthy because liveness tracks bytes/comments, not only parsed domain events.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T034-AC03",
+      "required": "Switching profiles never changes an in-flight caller or closes another client's subscription.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T034-AC04",
+      "required": "Changing conversation cancels obsolete loads and cannot overwrite a newly selected conversation.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T034-AC05",
+      "required": "Store-epoch mismatch triggers profile revalidation and a fresh snapshot.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T034-AC06",
+      "required": "One native reconnect loop exists per active subscription and shutdown disposes it.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T034-AC07",
+      "required": "The native frontend and a second T024 sample consumer operate together with independent cursor positions.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T035-AC01",
+      "required": "Host starts and serves real commands/subscriptions with no UI open; closing both UIs leaves exact-H3 messaging operational.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T035-AC02",
+      "required": "WinUI starts only the bundled known executable; endpoint metadata cannot choose an arbitrary executable.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T035-AC03",
+      "required": "Duplicate launch reuses one valid host; stale descriptor/conflicting port/lock produces useful failure instead of overwrite or port drift.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T035-AC04",
+      "required": "Optional sign-in startup changes only on an explicit operator choice and can be removed.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T035-AC05",
+      "required": "Stop responds then performs a bounded drain; known committed work can be reconciled after restart.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T035-AC06",
+      "required": "Direct-loopback clients/probes remain correct with proxy/PAC settings; user-logoff survival is not claimed.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T036-AC01",
+      "required": "Backup contains coherent entities, images, receipts, and events; an active store cannot be replaced.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T036-AC02",
+      "required": "Before-publication interruption leaves the old usable history/epoch; after publication the restored history always has its new epoch.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T036-AC03",
+      "required": "No old sidecar can be applied to the replacement, and a failed validation/replace preserves the current store or documented recoverable safety backup.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T036-AC04",
+      "required": "Normal restart does not rotate epoch; official restore closes restored active subscriptions.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T036-AC05",
+      "required": "Both frontends and native client detect the new epoch, revalidate profile IDs, and reload instead of silently waiting on stale cursors.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T036-AC06",
+      "required": "The maintenance command clearly reports manual-file-replacement limits and never silently discards the current store.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T037-AC01",
+      "required": "Status reflects the actual effective configuration and observed probe state rather than configured intent.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T037-AC02",
+      "required": "Invalid values and port/certificate/lock/migration/storage failures prevent false readiness with actionable diagnostics.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T037-AC03",
+      "required": "Logs omit message text, image bytes, complete request bodies, file-picker paths, and private-key material.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T037-AC04",
+      "required": "Log growth is bounded, stream counts return to baseline, and normal operation emits no unexpected warnings.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T037-AC05",
+      "required": "Timeout handling remains finite and uses provider behavior without unlimited retry wrappers.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T037-AC06",
+      "required": "There is no silent protocol fallback, new-store reset, or warning suppression to conceal a problem.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T038-AC01",
+      "required": "Both runtime families and required native/static files are present; product execution does not require a development SDK or Node/CDN.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T038-AC02",
+      "required": "The package records exact source commit, dependency versions, target platform, configuration, and artifact hashes.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T038-AC03",
+      "required": "Publication succeeds with zero build/publish/packaging warnings and excludes test hooks/private keys/user data.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T038-AC04",
+      "required": "Replacing application binaries does not overwrite the existing database or selected data directory.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T038-AC05",
+      "required": "The actual published host/WinUI launch and expose the same contracts, limits, and version described by the manifest.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T038-AC06",
+      "required": "Run/stop/backup/restore instructions match the packaged command interfaces.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T039-AC01",
+      "required": "The documented dataset/scenarios are reproducible and bounded without modifying production semantics or public fault routes.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T039-AC02",
+      "required": "Every retained committed matching event is recoverable, no uncommitted data appears, and duplicate client application is prevented.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T039-AC03",
+      "required": "Slow streams do not retain database readers, indefinitely block writers, or exceed configured stream/write/payload limits.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T039-AC04",
+      "required": "Finite contention and close/attach behavior remain correct; stream/connection/native-image resources return to their expected baseline.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T039-AC05",
+      "required": "Results report measured values and the exact environment; no unmeasured performance promise is asserted.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T039-AC06",
+      "required": "Expected injected failure diagnostics are asserted separately; all unexpected warnings/findings are resolved before the task passes.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T040-AC01",
+      "required": "The actual packaged product runs on a clean Windows 11 x64 machine without a development SDK, Node, or external script/CDN dependency.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T040-AC02",
+      "required": "WinUI and browser complete the same full scenario and produce equivalent persisted objects, owner fields, target/thread semantics, and errors.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T040-AC03",
+      "required": "Both UI processes demonstrate safe rendering, fragmented-stream recovery, explicit caller switching, and independent consumption.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T040-AC04",
+      "required": "Actual persisted H3 publication/subscription, UI-close host lifetime, stop/restart, and backup/restore pass against the candidate package.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T040-AC05",
+      "required": "All A01-A50 have current passing evidence with the relevant platform/method; missing/skipped/unexecuted required checks cannot count as pass.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T040-AC06",
+      "required": "Normal-operation compiler/analyzer/package/runtime/browser warnings and review findings are zero; injected negative outcomes are explicitly asserted.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    },
+    {
+      "id": "T040-AC07",
+      "required": "Candidate commit, effective configuration, dependency versions, product hashes, and evidence are recorded; the separate M06 full review is still required.",
+      "result": "not_run",
+      "observed": "",
+      "unexpectedWarnings": null,
+      "evidence": []
+    }
+  ]
+}

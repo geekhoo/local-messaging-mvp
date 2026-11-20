@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType></PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/LocalMessaging.Host/LocalMessaging.Host.csproj" />
+    <ProjectReference Include="../../src/LocalMessaging.Client/LocalMessaging.Client.csproj" />
+    <None Include="fixtures/*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>
