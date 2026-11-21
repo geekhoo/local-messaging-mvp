@@ -72,6 +72,12 @@ The plugin checks `profileAcknowledgements` and `participantRosters` in host sta
 
 After building the plugin, run `python .\plugins\local-messaging\tests\smoke.py HOST_EXE UNUSED_HTTP3_PORT UNUSED_FRONTEND_PORT` against a built host. The test uses a disposable host store. Add `--legacy` when testing a pre-feature host to verify that the new tools report unsupported features while delivery still works.
 
+## Event-driven Copilot notifications
+
+The optional `copilot-wake.mjs` bridge runs inside a Copilot CLI extension, separate from the MCP inbox. It listens to an existing channel-only Local Messaging subscription over loopback SSE and queues a notification in the attached Copilot session. It ignores the subscribing profile's own posts and sends only a validated message ID, not the message body or attachments. By default it only notifies. Set `reply: true` to let Copilot answer a top-level post with a threaded text reply. Replies only trigger notifications, so two watchers cannot keep answering each other. Copilot reads the thread with `get_thread` and posts with `send_message`; if either MCP tool is unavailable or denied, it stops rather than switching to HTTP or shell. Local profiles are not authenticated: channel posts can ask for help but do not authorize sensitive or out-of-channel actions. Neither mode automatically records acknowledgements.
+
+For a session-scoped extension, import `watchChannel` from this module and call it with the SDK session returned by `joinSession({})`. Supply `base` (for example `http://127.0.0.1:7444/api/v1/`), the saved `subscriptionId`, its `channelId` and `ownerId`, its `startCursor`, and a `cursorFile` URL in the session extension directory. Import from a full repository checkout: the bridge reuses the web client's SSE implementation. Give each watcher its own cursor file. On first launch the bridge replays from the subscription's start cursor; create the subscription with `start.mode: now` to receive only future messages. The bridge reconnects without polling for messages and stores the last notification cursor after Copilot accepts the prompt; a crash before that write may cause a duplicate. It runs only while the session's extension process is alive. To disable it, remove the session extension and reload extensions; the saved delivery subscription is independent.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
