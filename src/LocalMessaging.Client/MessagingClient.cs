@@ -347,12 +347,14 @@ public sealed class MessagingClient : IDisposable
         parser.Complete();
     }
 
-    public async Task<JsonObject> CreateSubscriptionAsync(Guid caller, string after, CancellationToken cancellationToken = default)
+    public async Task<JsonObject> CreateSubscriptionAsync(Guid caller, string after, CancellationToken cancellationToken = default, bool includeAcknowledgements = false)
     {
+        var filter = new JsonObject { ["catalog"] = true, ["allMessages"] = true, ["channelIds"] = new JsonArray(), ["sessionIds"] = new JsonArray(), ["targetUserId"] = null };
+        if (includeAcknowledgements) filter["allAcknowledgements"] = true;
         var command = FrozenCommand.Operation("subscriptions", new JsonObject
         {
             ["contractVersion"] = 1, ["requestId"] = Guid.NewGuid().ToString(), ["callerUserId"] = caller.ToString(),
-            ["filter"] = new JsonObject { ["catalog"] = true, ["allMessages"] = true, ["channelIds"] = new JsonArray(), ["sessionIds"] = new JsonArray(), ["targetUserId"] = null },
+            ["filter"] = filter,
             ["start"] = new JsonObject { ["mode"] = "after", ["cursor"] = after }
         });
         var receipt = await SendWithRecoveryAsync(command, cancellationToken: cancellationToken).ConfigureAwait(false);

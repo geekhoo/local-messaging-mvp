@@ -13,7 +13,8 @@ public sealed record ImageDescriptor(Guid Id, string ContentType, int ByteLength
 public sealed record MessageContent(string Type, string? Text, string? Caption, ImageDescriptor? Image);
 public sealed record MessageDto(Guid Id, Guid ChannelId, Guid SessionId, Guid AuthorUserId,
     MessageContent Content, Guid? ParentMessageId, Guid ThreadRootMessageId, int Depth,
-    Guid[] TargetUserIds, DateTime CreatedAtUtc, string Sequence, int? ReplyCount = null);
+    Guid[] TargetUserIds, DateTime CreatedAtUtc, string Sequence, int? ReplyCount = null,
+    int? AcknowledgementCount = null, string? LatestAcknowledgingHandle = null);
 public sealed record ObjectPage<T>(IReadOnlyList<T> Items, string SnapshotCursor, string? NextPageToken);
 public sealed record ThreadPage(MessageDto Root, IReadOnlyList<MessageDto> Items, IReadOnlyList<MessageDto> ContextMessages, string SnapshotCursor, string? NextPageToken);
 public sealed record EventPage(int ContractVersion, Guid SubscriptionId, JsonObject[] Items, string NextCursor, string HeadCursor, bool HasMore);

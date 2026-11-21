@@ -48,13 +48,16 @@ public sealed partial class MainWindow
         _channelParticipants.IsEnabled = _sessionParticipants.IsEnabled = !model.IsTransitioning;
     }
 
-    private Button CreateAcknowledgementsButton(Guid messageId)
+    private Button CreateAcknowledgementsButton(Guid messageId, int count, string? latestHandle, bool insideThread)
     {
-        var button = new Button { Content = IconLabel("\uE73E", "Ack"), IsEnabled = !model.IsTransitioning };
+        var text = count == 0 ? "Ack" : latestHandle is null ? $"Acknowledged ({count})"
+            : count == 1 ? $"Acknowledged by @{latestHandle}" : $"Acknowledged by @{latestHandle} +{count - 1}";
+        var button = new Button { Content = new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap }, IsEnabled = !model.IsTransitioning };
         if (TextStyle("SubtleButtonStyle") is Style style) button.Style = style;
-        AutomationProperties.SetAutomationId(button, $"ProfileAcknowledgements-{messageId}");
-        AutomationProperties.SetName(button, "Profile acknowledgements");
-        ToolTipService.SetToolTip(button, "Profile acknowledgements");
+        var name = count == 0 ? "Profile acknowledgements" : $"{text}. Open profile acknowledgements";
+        AutomationProperties.SetAutomationId(button, $"ProfileAcknowledgements-{(insideThread ? "Thread-" : "")}{messageId}");
+        AutomationProperties.SetName(button, name);
+        ToolTipService.SetToolTip(button, name);
         button.Click += async (_, _) => await RunAsync(() => ShowPublicProfilesAsync(button, PublicScope.Message, messageId, null));
         return button;
     }

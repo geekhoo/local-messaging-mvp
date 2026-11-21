@@ -1,8 +1,10 @@
 import assert from "node:assert/strict";
 import { existsSync } from "node:fs";
-import { readFile, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 import { join } from "node:path";
+import { tmpdir } from "node:os";
+import { acknowledgeAndReply } from "../../../plugins/local-messaging/copilot-reply.mjs";
 
 // Run only against a separately started, isolated integration-test store.
 const base = process.argv[2] || "http://127.0.0.1:7444";
@@ -39,7 +41,7 @@ page.on("console", message => {
 const report = { scope: "Real-browser integration against the supplied local test host; not Windows/WinUI/WIC qualification", base, startedAtUtc: new Date().toISOString(), checks: [], expectedDiagnostics: expectedNetwork, unexpectedDiagnostics: failures, status: "running" };
 const mark = name => report.checks.push({ name, result: "passed" });
 const suffix = Date.now().toString(36);
-const aHandle = "a_" + suffix, bHandle = "b_" + suffix;
+const aHandle = "copilot", bHandle = "b_" + suffix;
 const headers = { "X-Local-Messaging-Client": "1" };
 const get = async path => {
   const result = await context.request.get(base + "/api/v1/" + path, { headers });
@@ -66,25 +68,25 @@ try {
   await page.waitForFunction(() => document.querySelector("#connection-label").textContent === "Connected", { timeout: 15000 });
   const a = await createUser(aHandle, "Alice " + suffix);
   await page.locator("#new-channel").click();
-  await page.locator("#channel-name").fill("Browser check " + suffix);
+  await page.locator("#channel-name").fill("copilot");
   await page.locator("#first-session").fill("Initial");
   await page.locator("#channel-form button[type=submit]").click();
   await page.locator("#channel-dialog").waitFor({ state: "hidden" });
   await page.locator("#conversation-title").filter({ hasText: "Initial" }).waitFor();
   const channels = await get("channels?limit=200");
-  const channel = channels.items.find(item => item.name === "Browser check " + suffix);
+  const channel = channels.items.find(item => item.name === "copilot");
   assert.equal(channel.ownerUserId, a);
   let sessions = await get("channels/" + channel.id + "/sessions");
   assert.equal(sessions.items.length, 1);
   assert.equal(sessions.items[0].ownerUserId, a);
   mark("Browser profile creation and atomic channel/initial-session ownership");
   const b = await createUser(bHandle, "Bryan " + suffix);
-  await page.locator('#channels .tree-group:has(.channel-row[aria-current="true"]) .session-add').click(); await page.locator("#session-title").fill("Review");
+  await page.locator('#channels .tree-group:has(.channel-row[aria-current="true"]) .session-add').click(); await page.locator("#session-title").fill("General");
   await page.locator("#session-form button[type=submit]").click();
   await page.locator("#session-dialog").waitFor({ state: "hidden" });
-  await page.locator("#conversation-title").filter({ hasText: "Review" }).waitFor();
+  await page.locator("#conversation-title").filter({ hasText: "General" }).waitFor();
   sessions = await get("channels/" + channel.id + "/sessions");
-  const session = sessions.items.find(item => item.title === "Review");
+  const session = sessions.items.find(item => item.title === "General");
   assert.equal(session.ownerUserId, b);
   assert.equal((await get("channels/" + channel.id)).ownerUserId, a);
   mark("Different caller owns new session while original channel owner is preserved");
@@ -100,25 +102,58 @@ try {
   assert.equal(await page.evaluate(() => window.__injected), undefined);
   assert.equal(await page.locator("#timeline .message-body img").count(), 0);
   mark("Literal safe rendering and canonical explicit/textual target union");
-  await page.locator('article[data-message-id="' + root.id + '"] > .message-actions').getByRole("button", { name: "Reply", exact: true }).click();
-  await page.locator("#message-text").fill("Level two " + suffix);
-  await page.locator("#send").click();
-  await page.waitForFunction(() => document.querySelector("#message-text").value === "");
-  await page.locator('article[data-message-id="' + root.id + '"] > .message-actions').getByRole("button", { name: /repl|Open thread/i }).last().click();
-  await waitForText("Level two " + suffix);
+  const rootActions = page.locator(`article[data-message-id="${root.id}"] > .message-actions`);
+  await page.locator("#message-text").fill("Leave this main draft unchanged");
+  const replyContent = "Level two " + suffix + "\nsecond line";
+  const journal = await mkdtemp(join(tmpdir(), "local-messaging-browser-"));
+  try {
+    const bridge = { base: new URL("/api/v1/", base).href, channelId: channel.id, ownerId: a, messageId: root.id,
+      epoch: (await get("status")).storeEpoch, cursorFile: pathToFileURL(join(journal, "cursor")).href };
+    const committed = await acknowledgeAndReply({ ...bridge, text: replyContent.replace("\n", "\r\n") });
+    assert.equal(committed.acknowledgement, "committed");
+    assert.equal(committed.reply, "committed");
+  } finally { await rm(journal, { recursive: true, force: true }); }
+  await rootActions.getByRole("button", { name: `Acknowledged by @${aHandle}. View profile acknowledgements (1)` }).waitFor();
+  await rootActions.getByRole("button", { name: /Acknowledged by/ }).click();
+  await page.locator("#public-items").getByText(new RegExp(aHandle)).waitFor();
+  await page.locator("#public-dialog").getByRole("button", { name: "Close", exact: true }).click();
+  await rootActions.getByRole("button", { name: "Reply (1 reply), New reply", exact: true }).click();
+  await rootActions.getByRole("button", { name: "Reply (1 reply)", exact: true }).waitFor();
+  await rootActions.getByRole("button", { name: /Acknowledged by/ }).waitFor();
+  assert.equal(await page.locator("#thread-reply-text").evaluate(el => el === document.activeElement), true);
   messages = await get("sessions/" + session.id + "/messages?view=flat&limit=200");
-  const child = messages.items.find(item => item.content.text === "Level two " + suffix);
+  const child = messages.items.find(item => item.content.text === replyContent);
   assert.deepEqual(child.targetUserIds, []);
-  await page.locator('article[data-message-id="' + child.id + '"] > .message-actions').getByRole("button", { name: "Reply", exact: true }).click();
-  await page.locator("#message-text").fill("Level three " + suffix); await page.locator("#send").click();
-  await waitForText("Level three " + suffix);
+  await page.locator(`article[data-message-id="${child.id}"] > .message-actions`).getByRole("button", { name: "Reply", exact: true }).click();
+  const editor = page.locator("#thread-reply-text");
+  const nestedText = "Level three " + suffix + "\nthird line";
+  await editor.fill("Level three " + suffix); await editor.press("Enter"); await editor.pressSequentially("third line");
+  await page.getByRole("button", { name: "Send reply", exact: true }).click();
+  const rendered = page.locator(".thread .message-body").filter({ hasText: "third line" });
+  await rendered.waitFor();
+  assert.equal(await rendered.textContent(), nestedText);
+  assert.equal(await editor.inputValue(), "");
+  assert.equal(await page.locator("#message-text").inputValue(), "Leave this main draft unchanged");
   messages = await get("sessions/" + session.id + "/messages?view=flat&limit=200");
-  const nested = messages.items.find(item => item.content.text === "Level three " + suffix);
-  assert.equal(nested.depth, 3); assert.equal(nested.threadRootMessageId, root.id);
-  assert.equal(await page.locator('article[data-message-id="' + nested.id + '"] > .message-actions').getByRole("button", { name: "Reply", exact: true }).isDisabled(), true);
-  mark("Three-level thread UI and no inherited targets");
+  const nested = messages.items.find(item => item.content.text === nestedText);
+  assert.equal(nested.depth, 3); assert.equal(nested.threadRootMessageId, root.id); assert.equal(nested.parentMessageId, child.id);
+  assert.equal(await page.locator(`article[data-message-id="${nested.id}"] > .message-actions`).getByRole("button", { name: "Reply", exact: true }).isDisabled(), true);
+  mark("Two-profile live acknowledgement, accessible reply badge, and focused multiline nested send preserve main draft");
+  await rootActions.getByRole("button", { name: /Hide thread/ }).click();
+  const rootLines = "Root line " + suffix + "\nmore lines";
+  await page.locator("#message-text").fill(rootLines.replace("\n", "\r\n"));
+  await page.locator("#send").click();
+  await page.locator(".message-body").filter({ hasText: "more lines" }).waitFor();
+  await page.locator("#refresh-view").click();
+  await rootActions.getByRole("button", { name: "Reply (2 replies)", exact: true }).waitFor();
+  await rootActions.getByRole("button", { name: /Acknowledged by/ }).waitFor();
+  await rootActions.getByRole("button", { name: /Open thread/ }).click();
+  await rendered.waitFor();
+  assert.equal(await rendered.textContent(), nestedText);
+  assert.equal(await rendered.evaluate(el => getComputedStyle(el).whiteSpace), "pre-wrap");
+  assert.equal(await page.locator(".message-body").filter({ hasText: "more lines" }).textContent(), rootLines);
+  mark("Newline rendering and committed indicators survive snapshot reload without a new-reply highlight");
   // A valid two-by-two PNG; real WIC decoding is a separate Windows gate when the host uses a portable validator.
-  if (await page.locator("#cancel-reply").isVisible()) await page.locator("#cancel-reply").click();
   const png = await readFile(new URL("../../../tests/LocalMessaging.Scenarios/fixtures/sample.png", import.meta.url));
   await page.locator("#image-file").setInputFiles({ name: "pixel.png", mimeType: "image/png", buffer: png });
   await page.locator("#message-text").fill("Image " + suffix); await page.locator("#send").click();
@@ -136,7 +171,6 @@ try {
   await second.locator("#mentions").click();
   await second.getByText(unsafe, { exact: true }).waitFor();
   mark("Separate tabs retain caller identity and selected-user mentions");
-  if (await page.locator("#cancel-reply").isVisible()) await page.locator("#cancel-reply").click();
   // Hold a committed response while the selected profile changes.
   let release, committed;
   const releasePromise = new Promise(resolve => { release = resolve; });
@@ -160,7 +194,7 @@ try {
   await page.unroute("**/api/v1/requests");
   mark("Unresolved send keeps original caller across profile switch");
   // A lost committed response must retry its exact command identity.
-  await page.locator('#channels .tree-group:has(.channel-row[aria-current="true"]) .session-row').filter({ hasText: "Review" }).click();
+  await page.locator('#channels .tree-group:has(.channel-row[aria-current="true"]) .session-row').filter({ hasText: "General" }).click();
   const lostText = "Lost response " + suffix;
   let first = true; const ids = [];
   allowAbortedRequest = true;

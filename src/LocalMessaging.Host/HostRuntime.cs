@@ -215,7 +215,7 @@ internal sealed class HostRuntime : IAsyncDisposable
             result["startupProbe"]=new JsonObject { ["result"]=_probeResult,["httpVersion"]=_probeResult=="http3_exact_verified"?"3.0":null };
             result["capabilities"]=new JsonObject { ["contractVersion"]=1,["authentication"]=false,["privateMessages"]=false,
                 ["createOnly"]=true,["maxThreadDepth"]=3,["messageTypes"]=new JsonArray("text","image"),["http3Required"]=_requireHttp3,
-                ["profileAcknowledgements"]=true,["participantRosters"]=true };
+                ["profileAcknowledgements"]=true,["participantRosters"]=true,["liveAcknowledgementSummaries"]=true };
             result["endpoints"]=new JsonObject { ["messaging"]=_options.MessagingBaseUrl,["frontend"]=_options.FrontendBaseUrl };
             await JsonAsync(context,result,_ready?200:503);
         });

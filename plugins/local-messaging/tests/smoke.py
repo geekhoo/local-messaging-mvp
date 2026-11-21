@@ -7,6 +7,7 @@ import sys
 import tempfile
 import time
 import uuid
+from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
 DLL = ROOT / 'server' / 'bin' / 'Release' / 'net10.0' / 'LocalMessaging.Plugin.dll'
@@ -177,6 +178,50 @@ def exercise_public_profiles(tool, user, channel, session, message, reply, subsc
     assert roster(channelId=channel) == roster(sessionId=session) == {other}
 
 
+def exercise_copilot(frontend_port, state):
+    base = f'http://127.0.0.1:{frontend_port}/api/v1/'
+
+    def api(path, value=None):
+        headers = {'X-Local-Messaging-Client': '1', 'Content-Type': 'application/json'}
+        data = None if value is None else json.dumps(value).encode()
+        with urlopen(Request(base + path, data=data, headers=headers), timeout=10) as response:
+            return json.load(response)
+
+    def create(kind, caller=None, **fields):
+        receipt = api('requests', dict(contractVersion=1, requestId=str(uuid.uuid4()),
+                                       callerUserId=caller, dataObject=dict(type=kind, **fields)))
+        assert receipt['state'] == 'committed', receipt
+        return receipt['dataObjects'][kind]['id']
+
+    copilot = create('user', handle='copilot', displayName='Copilot')
+    sender = create('user', handle='sender', displayName='Sender')
+    channel = create('channel', sender, name='Copilot Test')
+    channel_selector = dict(mode='existing', id=channel)
+    session = create('session', sender, channel=channel_selector, title='General')
+    message = create('message', sender, channel=channel_selector, session=dict(mode='existing', id=session),
+                     content=dict(type='text', text='Hello Copilot'))
+    scope = dict(base=base, channelId=channel, ownerId=copilot, messageId=message,
+                 epoch=api('status')['storeEpoch'], cursorFile=(Path(state) / 'copilot.cursor').as_uri())
+
+    def handle(text):
+        result = subprocess.run(['node', str(ROOT / 'copilot-reply.mjs')],
+                                input=json.dumps(dict(scope, text=text)), capture_output=True, text=True, timeout=30)
+        assert result.returncode == 0, result.stderr
+        return json.loads(result.stdout)
+
+    assert not api(f'messages/{message}/acknowledgements')['items']
+    first = handle('Hello!\r\nHow can I help?')
+    assert first['acknowledgement'] == first['reply'] == 'committed', first
+    assert handle('Different draft on replay') == first
+    acks = api(f'messages/{message}/acknowledgements')['items']
+    replies = api(f'messages/{message}/thread')['items']
+    assert [item['profile']['id'] for item in acks] == [copilot], acks
+    assert len(replies) == 1, replies
+    assert (replies[0]['id'], replies[0]['authorUserId'], replies[0]['parentMessageId'], replies[0]['content']['text']) == (
+        first['replyMessageId'], copilot, message, 'Hello!\nHow can I help?'), replies
+    print('Copilot acknowledge/reply frontend API smoke test passed.')
+
+
 def main():
     if len(sys.argv) not in (4, 5) or (len(sys.argv) == 5 and sys.argv[4] != '--legacy'):
         raise SystemExit('usage: smoke.py HOST_EXE UNUSED_HTTP3_PORT UNUSED_FRONTEND_PORT [--legacy]')
@@ -202,6 +247,8 @@ def main():
                         smoke(proc, legacy=legacy)
                     finally:
                         proc.kill()
+                if not legacy:
+                    exercise_copilot(f_port, state)
             finally:
                 host.terminate()
                 host.wait(timeout=10)

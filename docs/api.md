@@ -70,9 +70,11 @@ Message data selects both containers explicitly:
 
 The new channel, session, message, targets, ordered durable events and receipt commit atomically. Existing selectors use `mode: existing` and an `id`. Missing or inconsistent existing IDs are rejected; they never cause implicit creation.
 
+Message snapshots include `replyCount` for roots (all descendants) and for nested messages (direct children), plus `acknowledgementCount` and `latestAcknowledgingHandle` derived as of the snapshot cursor. They are indicators, not part of the immutable message or receipt.
+
 Known `@handle` mentions and explicit target IDs are normalized to a deduplicated union. Unknown valid mention handles reject the command. Escaped mentions, email addresses, too-short tokens and invalid tokens follow the grammar in the original specification. Targeting is public. A reply does not inherit its parent's targets.
 
-Use `parentMessageId` to reply. Root messages have depth 1; children depth 2; grandchildren depth 3. Replies below level 3 and cross-session parents are rejected. Root identity and depth are server-derived and protected by relational constraints. Clients display text using native text controls or safe DOM text nodes.
+Use `parentMessageId` to reply. Root messages have depth 1; children depth 2; grandchildren depth 3. Replies below level 3 and cross-session parents are rejected. Root identity and depth are server-derived and protected by relational constraints. Message text canonicalizes CRLF and bare CR to LF before validation, so typed or pasted Windows and LF line breaks render consistently. Clients display text using native text controls or safe DOM text nodes.
 
 ## Public profile actions
 
@@ -125,7 +127,7 @@ Domain pages return `items`, `snapshotCursor`, and `nextPageToken`. Capture H fr
 }
 ```
 
-Start can be `now`, `beginning`, or `after` with a cursor. Filter branches include catalog, all messages, channel IDs, session IDs and a target user. They combine with OR and produce each matching event once. Saved definitions survive process restart; each connected consumer has its own cursor. One consumer never removes another's events.
+Start can be `now`, `beginning`, or `after` with a cursor. Filter branches include catalog, all messages, channel IDs, session IDs and a target user. Clients that see `liveAcknowledgementSummaries` on `GET status` may also send `allAcknowledgements: true`; it replays `acknowledgement.created` without changing `allMessages` semantics. They combine with OR and produce each matching event once. Saved definitions survive process restart; each connected consumer has its own cursor. One consumer never removes another's events.
 
 A create envelope may additionally contain `subscribe: { "scope": "resolvedChannel", "start": "beforeRequest" }`; other scopes are `catalog` and `resolvedSession`. Objects and that saved subscription share the transaction, and the response makes the subscription queryable. User creation does not accept a coupled subscription.
 

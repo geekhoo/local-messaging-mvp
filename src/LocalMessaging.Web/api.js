@@ -112,10 +112,10 @@ export class Api {
     });
   }
   image(path, signal) { return this.request(path, { signal, binary: true, timeoutMs: 30000 }); }
-  createSubscription(callerUserId, after, requestId = crypto.randomUUID(), signal) {
+  createSubscription(callerUserId, after, requestId = crypto.randomUUID(), signal, includeAcknowledgements = false) {
     return this.post("subscriptions", {
       contractVersion: 1, requestId, callerUserId,
-      filter: { catalog: true, allMessages: true, channelIds: [], sessionIds: [], targetUserId: null },
+      filter: { catalog: true, allMessages: true, ...(includeAcknowledgements ? { allAcknowledgements: true } : {}), channelIds: [], sessionIds: [], targetUserId: null },
       start: { mode: "after", cursor: after }
     }, signal);
   }

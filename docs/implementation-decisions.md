@@ -24,6 +24,12 @@ Queries use short contexts and immutable snapshot H. Finite replay first scans b
 
 Maintenance uses the same exclusive process/store lock. Restore prepares the replacement's new epoch and closed subscriptions before publishing the main file, with sidecar checkpointing and a safety backup. Fault tests exercise before/after commit and before/after restore publication without adding public fault-injection routes.
 
+## Replies, acknowledgements and line breaks
+
+Message text canonicalizes CRLF and bare CR to LF in Application before control-character and length checks; the Web and WinUI clients submit editor text unchanged and render stored LF with native text layout or pre-wrap. Custom line-break tests cover root and nested messages.
+
+Reply counts, committed acknowledgement counts and the latest acknowledging handle are derived in the same query as each message and pinned to the snapshot cursor; immutable messages and receipts are unchanged. `liveAcknowledgementSummaries` advertises snapshot summaries plus the optional `allAcknowledgements` replay branch. That branch is explicit so existing `allMessages` consumers keep their event contract. Both frontends opt in only when the capability is present, merge live events once per snapshot cursor, highlight incoming replies only for messages outside the open thread, and clear the highlight without clearing counts when the thread opens. Thread composers are separate from the session draft and send a frozen command for the selected parent, including nested parents.
+
 ## Local trust and image behavior
 
 M is genuinely HTTP/3-only with TLS 1.3. Readiness is false until an exact HTTP/3 native client receives the correct running instance. F is loopback HTTP/1.1 and serves both frontends. Endpoint dispatch checks actual local port and authority before route/static handling; static middleware is additionally restricted to F and excludes its API namespace.

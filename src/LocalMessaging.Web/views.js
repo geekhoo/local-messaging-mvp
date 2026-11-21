@@ -195,20 +195,30 @@ export function renderTimeline(container, state, hooks, images) {
       const navigate = element("button", "text-button", "Open conversation →");
       navigate.addEventListener("click", () => hooks.navigate(message)); actions.append(navigate);
     } else {
-      const reply = element("button", "text-button", "Reply");
+      const reply = element("button", "text-button reply-button" + (message.newReply ? " new-reply" : ""), "Reply");
+      const count = message.replyCount ?? 0;
+      if (count) {
+        const badge = element("span", "reply-count", String(count));
+        badge.setAttribute("aria-hidden", "true"); reply.append(badge);
+      }
+      if (message.newReply) reply.append(element("span", "reply-new-label", "New reply"));
+      reply.setAttribute("aria-label", `Reply${count ? ` (${count} ${count === 1 ? "reply" : "replies"})` : ""}${message.newReply ? ", New reply" : ""}`);
       reply.disabled = !state.profileId || message.depth >= 3;
       if (message.depth >= 3) reply.title = "A thread has at most three levels.";
       reply.addEventListener("click", () => hooks.reply(message)); actions.append(reply);
       if (showThread) {
         const opened = state.view.threads.has(message.id);
-        const count = message.replyCount ?? 0;
-        const thread = element("button", "text-button", opened ? "Hide thread ↑" : (count ? count + (count === 1 ? " reply" : " replies") : "Open thread") + " ↓");
+        const thread = element("button", "text-button", opened ? "Hide thread ?" : "Open thread ?");
         thread.setAttribute("aria-expanded", String(opened));
         thread.addEventListener("click", () => hooks.thread(message)); actions.append(thread);
       }
     }
     if (state.capabilities?.profileAcknowledgements) {
-      const acknowledgements = element("button", "text-button", "Profile acknowledgements");
+      const count = message.acknowledgementCount || 0;
+      const handle = message.latestAcknowledgingHandle;
+      const label = count ? `Acknowledged${handle ? ` by @${handle}` : ""}${count > 1 ? ` +${count - 1}` : ""}` : "Profile acknowledgements";
+      const acknowledgements = element("button", "text-button" + (count ? " acknowledged" : ""), label);
+      if (count) acknowledgements.setAttribute("aria-label", `${label}. View profile acknowledgements (${count})`);
       acknowledgements.addEventListener("click", () => hooks.acknowledgements(message));
       actions.append(acknowledgements);
     }
@@ -235,6 +245,7 @@ export function renderTimeline(container, state, hooks, images) {
         more.addEventListener("click", () => hooks.moreThread(item.id)); threadBox.append(more);
       }
       if (thread.items.length >= 200) threadBox.append(element("p", "section-note", "Showing a 200-reply window. Continue paging, or reopen the thread to start again."));
+      if (state.view.replyTarget?.threadRootMessageId === item.id) threadBox.append(hooks.replyComposer(state.view.replyTarget));
       card.append(threadBox);
     }
     fragment.append(card);

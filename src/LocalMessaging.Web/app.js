@@ -1,6 +1,6 @@
 import { Api, ApiError, freezeCommand } from "./api.js";
 import { LiveSubscription } from "./stream.js";
-import { DraftStore, compareCursors, mergeById, appendPageWindow, newView, rememberMessage, safePreference } from "./state.js";
+import { DraftStore, compareCursors, mergeById, appendPageWindow, newView, rememberMessage, safePreference, stampMessages, countIncomingReply, applyCommittedAcknowledgement } from "./state.js";
 import { element, formatError, userLabel, renderNavigationTree, renderTimeline, ImageViews } from "./views.js";
 import { publicCapabilities, publicScopes, publicAction, readPublicPage } from "./public-lists.js";
 
@@ -28,7 +28,7 @@ const publicDialog = $("public-dialog");
 let publicList = null;
 const callbacks = {
   createUser: () => openDialog("user-dialog"),
-  reply: beginReply, thread: toggleThread, moreThread: loadMoreThread, navigate: navigateMessage,
+  reply: beginReply, replyComposer: renderReplyComposer, thread: toggleThread, moreThread: loadMoreThread, navigate: navigateMessage,
   acknowledgements: message => openPublicList("message", message.id)
 };
 
@@ -114,7 +114,15 @@ function renderNav() {
 }
 function renderContent({ scroll = false } = {}) {
   const oldScroll = $("timeline").scrollTop;
+  const editor = document.activeElement?.matches(".thread-reply-text") ? document.activeElement : null;
+  const target = editor?.dataset.parentId;
+  const selection = editor && [editor.selectionStart, editor.selectionEnd, editor.selectionDirection];
   renderTimeline($("timeline"), state, callbacks, images);
+  if (target && state.view.replyTarget?.id === target) {
+    const next = $("timeline").querySelector(".thread-reply-text");
+    next?.focus({ preventScroll: true });
+    next?.setSelectionRange(...selection);
+  }
   const count = state.view.kind === "mentions" ? state.view.mentions.length : state.view.roots.length;
   $("history-controls").hidden = !count && !state.view.nextPageToken;
   $("more-messages").hidden = !state.view.nextPageToken;
@@ -136,8 +144,6 @@ function renderComposer() {
   $("message-text").placeholder = value.image ? "Add a caption… @handles work here too." : "Write a message… Use @handle to get someone's attention.";
   $("message-label").textContent = value.image ? "Image caption" : "Message";
   $("draft-owner").textContent = "Sending as @" + (currentUser()?.handle || "") + " · draft stays with this profile and session";
-  $("reply-context").hidden = !value.reply;
-  $("reply-label").textContent = value.reply ? "Replying to " + userLabel(state.users.get(value.reply.authorUserId), value.reply.authorUserId) + " · next level " + (value.reply.depth + 1) : "";
   $("target-chips").replaceChildren(...value.targetUserIds.map(id => {
     const chip = element("span", "chip", "@" + (state.users.get(id)?.handle || id.slice(0, 8)));
     const remove = element("button", "", "×"); remove.type = "button"; remove.setAttribute("aria-label", "Remove target");
@@ -245,7 +251,7 @@ async function bootstrap(preferred = state.profileId || safePreference(local, pr
       subscriptionAttempt = { owner: state.profileId, epoch: state.epoch, after: state.head, requestId: crypto.randomUUID() };
     }
     const attempt = subscriptionAttempt;
-    const receipt = await api.createSubscription(attempt.owner, attempt.after, attempt.requestId, signal);
+    const receipt = await api.createSubscription(attempt.owner, attempt.after, attempt.requestId, signal, state.capabilities.liveAcknowledgementSummaries);
     if (generation !== bootGeneration) {
       if (receipt.subscription) {
         closeQueue.set(receipt.subscription.id, { descriptor: receipt.subscription, epoch: attempt.epoch, requestId: crypto.randomUUID() });
@@ -372,11 +378,11 @@ async function loadView({ asOf = null, append = false } = {}) {
     const path = kind === "mentions" ? "users/" + encodeURIComponent(state.profileId) + "/mentions" : "sessions/" + encodeURIComponent(state.sessionId) + "/messages";
     const page = await api.get(path, { asOf: snapshot, pageToken: append ? view.nextPageToken : null, limit: 50, view: kind === "mentions" ? null : "roots" }, signal);
     if (generation !== viewGeneration || view !== state.view) return;
-    if (!append) { view.roots = []; view.mentions = []; view.threads.clear(); view.seenMessages.clear(); view.activity = 0; view.atLatest = true; }
+    if (!append) { view.roots = []; view.mentions = []; view.threads.clear(); view.replyTarget = null; view.seenMessages.clear(); view.activity = 0; view.atLatest = true; }
     else view.atLatest = false;
-    if (kind === "mentions") view.mentions = append ? appendPageWindow(view.mentions, page.items, 200, true) : mergeById([], page.items, 200, true);
+    if (kind === "mentions") view.mentions = append ? appendPageWindow(view.mentions, stampMessages(page.items, page.snapshotCursor), 200, true) : mergeById([], stampMessages(page.items, page.snapshotCursor), 200, true);
     else {
-      const roots = page.items.map(item => ({ ...item, _countCursor: page.snapshotCursor }));
+      const roots = stampMessages(page.items, page.snapshotCursor);
       view.roots = append ? appendPageWindow(view.roots, roots, 200, true) : mergeById([], roots, 200, true);
       const rootIds = new Set(view.roots.map(item => item.id));
       for (const id of view.threads.keys()) if (!rootIds.has(id)) view.threads.delete(id);
@@ -384,7 +390,7 @@ async function loadView({ asOf = null, append = false } = {}) {
     view.snapshotCursor = page.snapshotCursor; view.nextPageToken = page.nextPageToken;
     view.loading = false;
     const pending = view.pendingEvents.splice(0);
-    for (const event of pending) applyMessage(event.dataObject, event.cursor, false);
+    for (const event of pending) applyTimelineEvent(event, false);
     renderNav(); renderContent({ scroll: !append && kind !== "mentions" });
   } catch (error) { if (!signal.aborted) handleReadError(error); }
   finally { if (generation === viewGeneration && view === state.view) view.loading = false; }
@@ -403,13 +409,34 @@ function applyEvent(event) {
     }
     case "message.created":
       if (object.targetUserIds?.includes(state.profileId) && state.view.kind !== "mentions") { state.mentionsCount++; renderNav(); }
-      if (state.view.loading) {
-        if (state.view.pendingEvents.length >= 1000) {
-          state.view.pendingEvents = []; state.view.activity++; void loadView();
-        } else state.view.pendingEvents.push(event);
-      } else applyMessage(object, event.cursor);
+      queueTimelineEvent(event);
+      break;
+    case "acknowledgement.created":
+      queueTimelineEvent(event);
+      if (publicDialog.open && publicList?.kind === "message" && publicList.id === object.messageId) void loadPublicList();
       break;
   }
+}
+
+function queueTimelineEvent(event) {
+  if (state.view.loading) {
+    if (state.view.pendingEvents.length >= 1000) {
+      state.view.pendingEvents = []; state.view.activity++; void loadView();
+    } else state.view.pendingEvents.push(event);
+  } else applyTimelineEvent(event);
+}
+
+function applyTimelineEvent(event, render = true) {
+  if (event.eventType !== "acknowledgement.created") return applyMessage(event.dataObject, event.cursor, render);
+  const view = state.view;
+  if (!view.snapshotCursor || compareCursors(event.cursor, view.snapshotCursor) <= 0) return;
+  const copies = new Set([...view.roots, ...view.mentions]);
+  for (const thread of view.threads.values()) {
+    for (const item of [...thread.items, ...thread.contextMessages]) copies.add(item);
+  }
+  let changed = false;
+  for (const item of copies) changed = applyCommittedAcknowledgement(item, event.dataObject, event.cursor) || changed;
+  if (changed && render) renderContent();
 }
 
 function applyMessage(message, cursor, render = true) {
@@ -429,11 +456,20 @@ function applyMessage(message, cursor, render = true) {
       else view.roots = mergeById(view.roots, [message], 200, true);
     } else {
       const root = view.roots.find(item => item.id === message.threadRootMessageId);
-      if (root && first && (!root._countCursor || !cursor || compareCursors(cursor, root._countCursor) > 0)) root.replyCount = (root.replyCount || 0) + 1;
       const thread = view.threads.get(message.threadRootMessageId);
+      const own = message.authorUserId === state.profileId;
+      if (root) countIncomingReply(root, cursor, first, !!thread, own);
       if (thread && (!cursor || compareCursors(cursor, thread.snapshotCursor) > 0)) {
+        for (const item of [...thread.items, ...thread.contextMessages]) {
+          if (item.id === message.parentMessageId) countIncomingReply(item, cursor, first, true, own);
+        }
         if (thread.items.length < 200) thread.items = mergeById(thread.items, [message], 200);
-        else if (first) view.activity++;
+        else if (first && own && view.replyTarget?.id === message.parentMessageId) {
+          // Keep the selected parent as context when the bounded reply window moves.
+          const parent = view.replyTarget;
+          thread.items = appendPageWindow(thread.items, [message], 200);
+          if (parent.depth > 1 && !thread.items.some(item => item.id === parent.id) && !thread.contextMessages.some(item => item.id === parent.id)) thread.contextMessages = [...thread.contextMessages.slice(-199), parent];
+        } else if (first) view.activity++;
       } else if (!thread && first) view.activity++;
     }
   }
@@ -441,7 +477,9 @@ function applyMessage(message, cursor, render = true) {
 }
 
 async function toggleThread(message) {
-  if (state.view.threads.has(message.threadRootMessageId)) { state.view.threads.delete(message.threadRootMessageId); renderContent(); return; }
+  if (state.view.threads.has(message.threadRootMessageId)) { state.view.threads.delete(message.threadRootMessageId);
+    if (state.view.replyTarget?.threadRootMessageId === message.threadRootMessageId) state.view.replyTarget = null;
+    renderContent(); return; }
   await openThread(message.id);
 }
 async function openThread(messageId) {
@@ -452,15 +490,17 @@ async function openThread(messageId) {
     const result = await api.get("messages/" + encodeURIComponent(messageId) + "/thread", { limit: 50 }, viewAbort?.signal);
     if (generation !== viewGeneration || sessionId !== state.sessionId) return;
     while (state.view.threads.size >= 8) state.view.threads.delete(state.view.threads.keys().next().value);
+    result.items = stampMessages(result.items, result.snapshotCursor);
+    result.contextMessages = stampMessages(result.contextMessages, result.snapshotCursor);
     state.view.threads.set(result.root.id, result);
-    state.view.roots = mergeById(state.view.roots, [{ ...result.root, _countCursor: result.snapshotCursor }], 200, true);
+    state.view.roots = mergeById(state.view.roots, [{ ...stampMessages([result.root], result.snapshotCursor)[0], newReply: false }], 200, true);
     for (const item of result.items) rememberMessage(state.view, item.id);
     renderContent();
   } catch (error) { if (error.name !== "AbortError") handleReadError(error); }
   finally {
     if (generation === viewGeneration && view === state.view) {
       view.loading = false;
-      for (const event of view.pendingEvents.splice(0)) applyMessage(event.dataObject, event.cursor, false);
+      for (const event of view.pendingEvents.splice(0)) applyTimelineEvent(event, false);
       renderContent();
     }
   }
@@ -471,8 +511,10 @@ async function loadMoreThread(rootId) {
   try {
     const result = await api.get("messages/" + encodeURIComponent(rootId) + "/thread", { asOf: thread.snapshotCursor, pageToken: thread.nextPageToken, limit: 50 }, viewAbort?.signal);
     if (generation !== viewGeneration || thread !== state.view.threads.get(rootId)) return;
-    const available = new Map([...thread.contextMessages, ...thread.items, ...result.contextMessages, ...result.items].map(item => [item.id, item]));
-    thread.items = appendPageWindow(thread.items, result.items, 200);
+    const existing = [...thread.contextMessages, ...thread.items];
+    const incoming = [...stampMessages(result.contextMessages, thread.snapshotCursor), ...stampMessages(result.items, result.snapshotCursor)];
+    const available = new Map([...incoming, ...existing].map(item => [item.id, item]));
+    thread.items = appendPageWindow(thread.items, result.items.map(item => available.get(item.id)), 200);
     const included = new Set(thread.items.map(item => item.id));
     const needed = new Set(thread.items.filter(item => item.parentMessageId && item.parentMessageId !== rootId && !included.has(item.parentMessageId)).map(item => item.parentMessageId));
     thread.contextMessages = [...needed].map(id => available.get(id)).filter(Boolean);
@@ -481,10 +523,61 @@ async function loadMoreThread(rootId) {
     renderContent();
   } catch (error) { if (error.name !== "AbortError") handleReadError(error); }
 }
-function beginReply(message) {
+async function beginReply(message) {
   if (message.depth >= 3) { showNotice("A thread has at most three levels."); return; }
-  const value = draft(); if (!value) return;
-  value.reply = message; drafts.touch(value); renderComposer(); $("message-text").focus();
+  const view = state.view;
+  if (!state.profileId) return;
+  if (!view.threads.has(message.threadRootMessageId)) await openThread(message.id);
+  if (state.view !== view || !view.threads.has(message.threadRootMessageId)) return;
+  view.replyTarget = message;
+  renderContent();
+  $("timeline").querySelector(".thread-reply-text")?.focus();
+}
+
+function renderReplyComposer(parent) {
+  const value = drafts.get(state.epoch, state.profileId, state.sessionId, parent.id);
+  const form = element("form", "thread-composer");
+  const label = element("label", "draft-owner", "Replying to " + userLabel(state.users.get(parent.authorUserId), parent.authorUserId));
+  const content = parent.content?.text || parent.content?.caption || "Image";
+  label.append(element("span", "reply-quote", content.slice(0, 120) + (content.length > 120 ? "..." : "")));
+  const text = element("textarea", "thread-reply-text");
+  text.id = "thread-reply-text"; text.dataset.parentId = parent.id; label.htmlFor = text.id;
+  text.value = value.text; text.rows = 3; text.required = true; text.maxLength = 16384;
+  const actions = element("div", "message-actions");
+  const send = element("button", "primary", "Send reply"); send.type = "submit";
+  const cancel = element("button", "text-button", "Cancel reply"); cancel.type = "button";
+  actions.append(send, cancel);
+  const error = element("p", "field-error"); error.setAttribute("role", "alert");
+  const original = () => [...state.pending.values()].find(item => item.draftKey === value.key && item.draftRevision === value.revision && item.phase !== "history-changed");
+  const record = original();
+  send.disabled = record?.phase === "sending";
+  showError(record?.error, error);
+  text.addEventListener("input", () => { value.text = text.value; drafts.touch(value); showError(null, error); send.disabled = false; });
+  text.addEventListener("keydown", event => {
+    if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) { event.preventDefault(); form.requestSubmit(); }
+  });
+  cancel.addEventListener("click", () => { state.view.replyTarget = null; renderContent(); });
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    try {
+      if (!value.text.trim()) throw new Error("Write a reply.");
+      let pending = original();
+      if (pending?.phase === "sending") return;
+      if (!pending) {
+        const command = freezeCommand({ type: "message", channel: { mode: "existing", id: state.channelId },
+          session: { mode: "existing", id: value.sessionId }, content: { type: "text", text: value.text },
+          parentMessageId: parent.id, targetUserIds: [] }, value.callerUserId);
+        pending = enqueue(command, { label: "Reply", draftKey: value.key, draftRevision: value.revision, replyRootId: parent.threadRootMessageId });
+      }
+      send.disabled = true;
+      const result = await runCommand(pending);
+      if (!result) showError(pending.error, error);
+      else if (state.view.replyTarget?.id === parent.id) $("thread-reply-text")?.focus({ preventScroll: true });
+    } catch (failure) { showError(failure, error); }
+    finally { send.disabled = false; }
+  });
+  form.append(label, text, actions, error);
+  return form;
 }
 async function navigateMessage(message) {
   try {
@@ -646,9 +739,9 @@ async function runCommand(record) {
     }
     if (objects.message) {
       const event = { dataObject: objects.message, cursor: receipt.storeEpoch + ":" + objects.message.sequence };
-      if (state.view.loading) state.view.pendingEvents.push(event);
-      else applyMessage(objects.message, event.cursor);
+      queueTimelineEvent(event);
     }
+    if (record.replyRootId) renderContent();
     renderNav(); renderPending(); renderComposer();
     showNotice(record.label + " saved.");
     // Navigation failure does not turn an acknowledged commit into an unknown command.
@@ -748,7 +841,6 @@ $("message-text").addEventListener("keydown", event => {
   }
   if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) { event.preventDefault(); $("composer").requestSubmit(); }
 });
-$("cancel-reply").addEventListener("click", () => { const value = draft(); if (value) { value.reply = null; drafts.touch(value); renderComposer(); } });
 $("image-file").addEventListener("change", async event => {
   const file = event.target.files[0], value = draft();
   event.target.value = "";
@@ -773,7 +865,7 @@ $("composer").addEventListener("submit", async event => {
     const object = {
       type: "message", channel: { mode: "existing", id: state.channelId }, session: { mode: "existing", id: value.sessionId },
       content: value.image ? { type: "image", caption: value.text || null } : { type: "text", text: value.text },
-      parentMessageId: value.reply?.id || null, targetUserIds: [...value.targetUserIds]
+      parentMessageId: null, targetUserIds: [...value.targetUserIds]
     };
     let record = [...state.pending.values()].find(item => item.draftKey === value.key && item.draftRevision === value.revision && item.phase !== "history-changed");
     if (record?.phase === "sending") return;

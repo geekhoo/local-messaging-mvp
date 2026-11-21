@@ -40,7 +40,12 @@ public sealed class ThreadProjection
         var pageItems = Objects(page["contextMessages"]).Concat(Objects(page["items"])).Prepend(root).ToArray();
         if (messages.Count + pageItems.Count(item => !messages.ContainsKey(item["id"]!.GetValue<string>())) > MaximumMessages)
             messages.Clear(); // A bounded page window retains the page's complete ancestor context.
-        foreach (var item in pageItems) Add(item);
+        foreach (var item in pageItems)
+        {
+            var snapshotItem = (JsonObject)item.DeepClone();
+            ShellViewModel.StampSnapshot(snapshotItem, page["snapshotCursor"]?.GetValue<string>());
+            Add(snapshotItem);
+        }
         NextPageToken = page["nextPageToken"]?.GetValue<string>();
         SnapshotCursor = page["snapshotCursor"]?.GetValue<string>();
         IsLoading = false;
@@ -73,6 +78,8 @@ public sealed class ThreadProjection
     {
         var id = message["id"]!.GetValue<string>();
         if (messages.Count >= MaximumMessages && !messages.ContainsKey(id)) { NeedsRefresh = true; return; }
+        if (messages.TryGetValue(id, out var existing) && existing["_nativeSnapshotSequence"] is not null
+            && message["_nativeSnapshotSequence"] is null) return;
         var parent = message["parentMessageId"]?.GetValue<string>();
         if (parent is not null && !messages.ContainsKey(parent)) NeedsRefresh = true;
         messages[id] = (JsonObject)message.DeepClone();

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { DraftStore, EventPosition, compareCursors, cursorParts, mergeById, appendPageWindow, safePreference } from "../state.js";
+import { DraftStore, EventPosition, compareCursors, cursorParts, mergeById, appendPageWindow, safePreference, stampMessages, countIncomingReply, applyCommittedAcknowledgement } from "../state.js";
 const epoch = "ffffffff-ffff-4fff-8fff-ffffffffffff";
 const cursor = sequence => epoch + ":" + sequence;
 
@@ -60,4 +60,39 @@ test("bounded history windows keep newly requested older pages instead of discar
   const replies = appendPageWindow(values.slice(0, 200), values.slice(200), 200);
   assert.equal(replies[0].sequence, "51");
   assert.equal(replies.at(-1).sequence, "250");
+});
+
+
+test("reply and acknowledgement indicators merge snapshot summaries and deduplicate live cursors", () => {
+  const first = stampMessages([{ id: "root", replyCount: 2, acknowledgementCount: 1, latestAcknowledgingHandle: "alice" }], cursor(10))[0];
+  countIncomingReply(first, cursor(10), true, false, false);
+  assert.equal(first.replyCount, 2, "Snapshot history must not look like a new reply.");
+  assert.equal(first.newReply, undefined);
+  countIncomingReply(first, cursor(11), true, false, false);
+  assert.equal(first.replyCount, 3);
+  assert.equal(first.newReply, true);
+  countIncomingReply(first, cursor(12), true, true, false);
+  assert.equal(first.replyCount, 4);
+  assert.equal(first.newReply, true, "An open thread does not clear an earlier unread reply.");
+  countIncomingReply(first, cursor(13), false, false, false);
+  assert.equal(first.replyCount, 4, "A deduplicated message event does not increment again.");
+
+  const acknowledgement = { messageId: "root", profile: { handle: "copilot" } };
+  assert.equal(applyCommittedAcknowledgement(first, acknowledgement, cursor(10)), false);
+  assert.equal(applyCommittedAcknowledgement(first, acknowledgement, cursor(14)), true);
+  assert.equal(first.acknowledgementCount, 2);
+  assert.equal(first.latestAcknowledgingHandle, "copilot");
+  assert.equal(applyCommittedAcknowledgement(first, acknowledgement, cursor(14)), false);
+  assert.equal(first.acknowledgementCount, 2, "The same committed acknowledgement cursor is applied once.");
+});
+
+test("thread drafts are isolated from the main-session draft and each parent", () => {
+  const drafts = new DraftStore(12);
+  const main = drafts.get(epoch, "alice", "session");
+  main.text = "keep this root draft";
+  const reply = drafts.get(epoch, "alice", "session", "parent-one");
+  reply.text = "nested reply";
+  assert.notEqual(main.key, reply.key);
+  assert.notEqual(reply.key, drafts.get(epoch, "alice", "session", "parent-two").key);
+  assert.equal(drafts.get(epoch, "alice", "session").text, "keep this root draft");
 });

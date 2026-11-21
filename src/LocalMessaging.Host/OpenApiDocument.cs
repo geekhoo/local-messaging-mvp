@@ -73,7 +73,7 @@ internal static class OpenApiDocument
                     ["storeEpoch"]=String("uuid"),["headCursor"]=String(),["ready"]=new JsonObject{["type"]="boolean"},
                     ["version"]=String(),["activeStreamCount"]=new JsonObject{["type"]="integer"},["limits"]=Schema(typeof(ProductLimits)),
                     ["startupProbe"]=new JsonObject{["type"]="object"},["capabilities"]=new JsonObject{["type"]="object",["properties"]=new JsonObject{
-                        ["profileAcknowledgements"]=new JsonObject{["type"]="boolean",["description"]="Supports profile acknowledgements; missing means unsupported."},
+                        ["profileAcknowledgements"]=new JsonObject{["type"]="boolean",["description"]="Supports profile acknowledgements; missing means unsupported."},["liveAcknowledgementSummaries"]=new JsonObject{["type"]="boolean",["description"]="Supports the allAcknowledgements filter branch replaying acknowledgement.created events and message acknowledgement summaries."},
                         ["participantRosters"]=new JsonObject{["type"]="boolean",["description"]="Supports public participant rosters; missing means unsupported."}}},
                     ["endpoints"]=new JsonObject{["type"]="object"}}}
         };

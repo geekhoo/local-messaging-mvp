@@ -62,6 +62,15 @@ public sealed partial class MainWindow : Window
     private ComposerDraft draft = new();
     private ContentDialog? threadDialog;
     private StackPanel? threadPanel;
+    private TextBox? _threadEditor;
+    private TextBlock? _threadTargetLabel;
+    private TextBlock? _threadStatus;
+    private Button? _sendReply;
+    private JsonObject? _replyParent;
+    private Guid? _threadCaller;
+    private FrozenCommand? _pendingReply;
+    private bool _isSendingReply;
+    private bool _indicatorRefreshRunning;
     private ThreadProjection thread = new();
 
     public MainWindow(NativeOptions options)
@@ -72,6 +81,10 @@ public sealed partial class MainWindow : Window
         model = new ShellViewModel(DispatchAsync, options);
         model.Changed += Render;
         model.MessageArrived += MessageArrived;
+        model.AcknowledgementArrived += messageId =>
+        {
+            if (thread.Messages.ContainsKey(messageId)) RenderThread();
+        };
         BuildLayout();
         Content = root;
         Activated += async (_, _) =>
@@ -164,9 +177,9 @@ public sealed partial class MainWindow : Window
         clearContext = GlyphButton("\uE74D", "Clear", () =>
         {
             if (!AdmitComposerMutation()) return Task.CompletedTask;
-            draft.Parent = null; draft.Image = null; draft.ImageName = null; draft.Edited();
+            draft.Image = null; draft.ImageName = null; draft.Edited();
             UpdateDraft(); return Task.CompletedTask;
-        }, "Clear reply or image");
+        }, "Clear image");
         secondary.Children.Add(clearContext);
         Add(actions, secondary, 0, 0);
         Add(actions, send, 0, 1);
@@ -185,6 +198,7 @@ public sealed partial class MainWindow : Window
         Add(root, connection, 3, 0);
         AutomationProperties.SetName(profiles, "Selected user profile");
         AutomationProperties.SetName(treePanel, "Channels and sessions");
+        AutomationProperties.SetAutomationId(editor, "MainComposer");
         AutomationProperties.SetName(editor, "Plain text message or image caption");
 
         profiles.SelectionChanged += async (_, _) =>
@@ -412,6 +426,7 @@ public sealed partial class MainWindow : Window
             if (model.LastError is string error) ShowNotice(error, InfoBarSeverity.Warning);
             if (draftKey != CurrentDraftKey()) RestoreDraft();
             UpdateDraft();
+            UpdateThreadComposer();
         }
         finally { synchronizing = false; }
     }
@@ -448,37 +463,33 @@ public sealed partial class MainWindow : Window
         }
         if (message["targetUserIds"] is JsonArray targets && targets.Count > 0)
             body.Children.Add(new TextBlock { Text = "→ " + string.Join(", ", targets.Select(t => model.UserLabel(t?.GetValue<string>()))), Foreground = TextBrush("TextFillColorSecondaryBrush"), TextWrapping = TextWrapping.Wrap, Style = TextStyle("CaptionTextBlockStyle"), Margin = new Thickness(0, 0, 0, 2) });
-        var actions = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, Margin = new Thickness(0, 6, 0, 0) };
+        var actions = new Grid { ColumnSpacing = 8, Margin = new Thickness(0, 6, 0, 0) };
+        actions.ColumnDefinitions.Add(new() { Width = GridLength.Auto });
+        actions.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
+        var messageIdText = message["id"]!.GetValue<string>();
+        var rootId = message["threadRootMessageId"]!.GetValue<string>();
         var depth = message["depth"]?.GetValue<int>() ?? 1;
-        var reply = GlyphButton("\uE97A", "Reply", async () =>
+        var (replyCount, acknowledgementCount, latestHandle) = model.MessageIndicators(message);
+        var isNew = model.HasNewReply(messageIdText);
+        var label = replyCount > 0 ? $"Reply ({replyCount})" : "Reply";
+        if (isNew) label += " \u00b7 New reply";
+        var name = isNew ? $"Reply, {replyCount} replies, New reply" : replyCount > 0 ? $"Reply, {replyCount} replies" : "Reply";
+        var canReply = depth < 3 && model.ActiveUserId is not null && !model.IsTransitioning;
+        var reply = GlyphButton("\uE97A", label, () =>
         {
-            if (sending || !draftCapacityAvailable || model.IsTransitioning) return;
-            if (model.ActiveUserId is null) { ShowNotice("Select a user first.", InfoBarSeverity.Warning); return; }
-            var originalCaller = model.ActiveUserId;
-            if (message["sessionId"]?.GetValue<string>() != model.SessionId)
+            if (insideThread)
             {
-                SaveDraft();
-                await model.SelectChannelAsync(message["channelId"]!.GetValue<string>());
-                await model.SelectSessionAsync(message["sessionId"]!.GetValue<string>());
-                RestoreDraft();
+                if (canReply) SelectReplyParent(message);
+                return Task.CompletedTask;
             }
-            if (model.ActiveUserId != originalCaller || model.SessionId != message["sessionId"]?.GetValue<string>() || !AdmitComposerMutation())
-            {
-                ShowNotice("The selection changed. Choose Reply again in the intended conversation.", InfoBarSeverity.Informational);
-                return;
-            }
-            draft.Parent = (JsonObject)message.DeepClone();
-            draft.Targets.Clear(); // A reply does not inherit parent targets.
-            draft.Edited();
-            UpdateDraft();
-            threadDialog?.Hide();
-            editor.Focus(FocusState.Programmatic);
-        }, depth < 3 ? "Reply" : "Maximum thread depth (3) reached", subtle: true);
-        reply.IsEnabled = depth < 3 && model.ActiveUserId is not null && !model.IsTransitioning && !sending && draftCapacityAvailable;
+            return ShowThreadAsync(rootId, canReply ? message : null);
+        }, canReply ? name : !insideThread ? $"Open thread, {replyCount} replies" : "Maximum thread depth (3) reached", subtle: !isNew);
+        if (isNew && TextStyle("AccentButtonStyle") is Style accent) reply.Style = accent;
+        reply.IsEnabled = !insideThread || canReply;
+        AutomationProperties.SetAutomationId(reply, $"Reply-{(insideThread ? "Thread" : "Timeline")}-{messageIdText}");
         actions.Children.Add(reply);
-        if (!insideThread) actions.Children.Add(GlyphButton("\uE8BD", "Thread", () => ShowThreadAsync(message["threadRootMessageId"]!.GetValue<string>()), "Open thread", subtle: true));
-        if (model.SupportsProfileAcknowledgements && Guid.TryParse(message["id"]?.GetValue<string>(), out var messageId))
-            actions.Children.Add(CreateAcknowledgementsButton(messageId));
+        if (model.SupportsProfileAcknowledgements && Guid.TryParse(messageIdText, out var messageId))
+            Add(actions, CreateAcknowledgementsButton(messageId, acknowledgementCount, latestHandle, insideThread), 0, 1);
         body.Children.Add(actions);
         return new Border
         {
@@ -528,38 +539,173 @@ public sealed partial class MainWindow : Window
         catch (Exception e) { if (!closing.IsCancellationRequested) ShowNotice("Image could not be loaded: " + e.Message, InfoBarSeverity.Warning); }
     }
 
-    private async Task ShowThreadAsync(string rootId)
+    private async Task ShowThreadAsync(string rootId, JsonObject? parent)
     {
-        await dialogSlot.WaitAsync(closing.Token);
-        threadLifetime = CancellationTokenSource.CreateLinkedTokenSource(closing.Token);
+        if (threadDialog is not null || !await dialogSlot.WaitAsync(0, closing.Token)) return;
+        var lifetime = CancellationTokenSource.CreateLinkedTokenSource(closing.Token);
+        threadLifetime = lifetime;
         try
         {
             thread = new ThreadProjection();
-            thread.Open(rootId); // Establish identity before the first awaited snapshot query.
-            threadPanel = new StackPanel { Spacing = 14 };
-            var container = new StackPanel { Spacing = 16, Padding = new Thickness(0, 4, 12, 8) };
+            thread.Open(rootId);
+            _threadCaller = model.ActiveUserId;
+            threadPanel = new StackPanel { Spacing = 10 };
+            // Reserve room for the dialog header and footer; only the message list should shrink.
+            var container = new Grid { RowSpacing = 10, MinWidth = 480, MaxHeight = Math.Max(220, root.XamlRoot.Size.Height - 176) };
+            container.RowDefinitions.Add(new() { Height = GridLength.Auto });
+            container.RowDefinitions.Add(new() { Height = new GridLength(1, GridUnitType.Star) });
+            container.RowDefinitions.Add(new() { Height = GridLength.Auto });
             var actions = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8 };
-            actions.Children.Add(IconButton("\uE72C", "Refresh thread", () => LoadThreadPageAsync(true)));
-            actions.Children.Add(Button("More replies", () => thread.NextPageToken is null ? Task.CompletedTask : LoadThreadPageAsync()));
+            var refresh = IconButton("\uE72C", "Refresh thread", () => LoadThreadPageAsync(true));
+            var more = Button("More replies", () => thread.NextPageToken is null ? Task.CompletedTask : LoadThreadPageAsync());
+            AutomationProperties.SetAutomationId(refresh, "RefreshThread");
+            AutomationProperties.SetAutomationId(more, "LoadMoreReplies");
+            actions.Children.Add(refresh);
+            actions.Children.Add(more);
             container.Children.Add(actions);
-            container.Children.Add(threadPanel);
-            threadDialog = new ContentDialog
+            Add(container, new ScrollViewer { Content = threadPanel, MaxHeight = 390, VerticalScrollBarVisibility = ScrollBarVisibility.Auto }, 1, 0);
+
+            var composer = new StackPanel { Spacing = 6, Visibility = Visibility.Collapsed };
+            _threadTargetLabel = new TextBlock { TextWrapping = TextWrapping.Wrap, MaxLines = 2, TextTrimming = TextTrimming.CharacterEllipsis };
+            _threadEditor = new TextBox { Header = "Thread reply", AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, MinHeight = 64, MaxHeight = 108, MaxLength = 16384 };
+            ScrollViewer.SetVerticalScrollBarVisibility(_threadEditor, ScrollBarVisibility.Auto);
+            _threadEditor.TextChanged += (_, _) =>
             {
-                Title = "Thread", XamlRoot = root.XamlRoot, CloseButtonText = "Close",
-                Content = new ScrollViewer { Content = container, MaxHeight = 620, MinWidth = 560 }
+                if (_isSendingReply) return;
+                _pendingReply = null;
+                UpdateThreadComposer();
+            };
+            _threadStatus = new TextBlock { TextWrapping = TextWrapping.Wrap, Visibility = Visibility.Collapsed };
+            _sendReply = new Button { Content = "Send reply", HorizontalAlignment = HorizontalAlignment.Right };
+            _sendReply.Click += async (_, _) => await SendReplyAsync();
+            AutomationProperties.SetAutomationId(_threadTargetLabel, "ThreadReplyTarget");
+            AutomationProperties.SetLabeledBy(_threadEditor, _threadTargetLabel);
+            AutomationProperties.SetAutomationId(_threadEditor, "ThreadComposer");
+            AutomationProperties.SetAutomationId(_sendReply, "SendThreadReply");
+            AutomationProperties.SetLiveSetting(_threadStatus, Microsoft.UI.Xaml.Automation.Peers.AutomationLiveSetting.Polite);
+            composer.Children.Add(_threadTargetLabel);
+            composer.Children.Add(_threadEditor);
+            composer.Children.Add(_threadStatus);
+            composer.Children.Add(_sendReply);
+            Add(container, composer, 2, 0);
+
+            var dialog = new ContentDialog { Title = "Thread", XamlRoot = root.XamlRoot, CloseButtonText = "Close", Content = container };
+            AutomationProperties.SetAutomationId(dialog, "MessageThread");
+            threadDialog = dialog;
+            dialog.Closing += (_, args) => args.Cancel = _isSendingReply && !lifetime.IsCancellationRequested;
+            dialog.Opened += (_, _) =>
+            {
+                var wasUnread = model.HasNewReply(rootId);
+                model.SetOpenThread(rootId);
+                if (wasUnread) RenderThread();
+                // Select after the editor is attached so its panel can be revealed and focused.
+                if (parent is not null) SelectReplyParent(parent);
             };
             await LoadThreadPageAsync();
-            threadLifetime.Token.ThrowIfCancellationRequested();
-            await threadDialog.ShowAsync();
+            lifetime.Token.ThrowIfCancellationRequested();
+            await dialog.ShowAsync();
         }
-        catch (OperationCanceledException) when (threadLifetime.IsCancellationRequested) { }
+        catch (OperationCanceledException) when (lifetime.IsCancellationRequested) { }
         finally
         {
-            threadLifetime.Cancel(); threadLifetime.Dispose(); threadLifetime = null;
+            model.SetOpenThread(null);
+            lifetime.Cancel(); lifetime.Dispose(); threadLifetime = null;
             threadDialog = null; threadPanel = null;
+            _threadEditor = null; _threadTargetLabel = null; _threadStatus = null; _sendReply = null;
+            _threadCaller = null; _replyParent = null; _pendingReply = null;
             threadImages.Cancel();
             thread = new ThreadProjection(); dialogSlot.Release();
         }
+    }
+
+    private void SelectReplyParent(JsonObject parent)
+    {
+        if (_isSendingReply || _threadEditor is null || _threadTargetLabel is null || model.IsTransitioning
+            || _threadCaller is null || _threadCaller != model.ActiveUserId) return;
+        if (_replyParent?["id"]?.GetValue<string>() != parent["id"]?.GetValue<string>())
+        {
+            _replyParent = parent;
+            _pendingReply = null;
+            var content = parent["content"]!.AsObject();
+            var excerpt = content["text"]?.GetValue<string>() ?? content["caption"]?.GetValue<string>();
+            var author = model.UserLabel(parent["authorUserId"]?.GetValue<string>());
+            _threadTargetLabel.Text = $"Replying to {author}: {(string.IsNullOrWhiteSpace(excerpt) ? "Image message" : excerpt)}";
+            SetThreadStatus(null);
+        }
+        if (_threadEditor.Parent is StackPanel composer) composer.Visibility = Visibility.Visible;
+        UpdateThreadComposer();
+        _threadEditor.Focus(FocusState.Programmatic);
+    }
+
+    private void UpdateThreadComposer()
+    {
+        if (_threadEditor is null || _sendReply is null) return;
+        var canReply = !_isSendingReply && _replyParent is not null && !model.IsTransitioning && _threadCaller == model.ActiveUserId;
+        _threadEditor.IsReadOnly = !canReply;
+        _sendReply.IsEnabled = canReply && !string.IsNullOrWhiteSpace(_threadEditor.Text);
+        _sendReply.Content = _isSendingReply ? "Sending reply..." : _pendingReply is null ? "Send reply" : "Retry reply";
+    }
+
+    private async Task RefreshIndicatorsAsync()
+    {
+        if (_indicatorRefreshRunning || closing.IsCancellationRequested) return;
+        _indicatorRefreshRunning = true;
+        try
+        {
+            await model.ReloadAsync();
+            if (threadDialog is not null && thread.RootId is not null) await LoadThreadPageAsync(true);
+        }
+        catch (Exception error) when (!closing.IsCancellationRequested)
+        {
+            ShowNotice("Live indicators were not refreshed; showing the bounded recent activity until the next reconnect. " + error.Message, InfoBarSeverity.Warning);
+        }
+        catch (OperationCanceledException) when (closing.IsCancellationRequested) { }
+        finally { _indicatorRefreshRunning = false; }
+    }
+
+    private async Task SendReplyAsync()
+    {
+        if (_isSendingReply || model.IsTransitioning || _threadCaller is not Guid caller || caller != model.ActiveUserId
+            || _replyParent is not JsonObject parent || _threadEditor is not TextBox input || string.IsNullOrWhiteSpace(input.Text)) return;
+        _pendingReply ??= FrozenCommand.Create(caller, new JsonObject
+        {
+            ["type"] = "message", ["channel"] = new JsonObject { ["mode"] = "existing", ["id"] = parent["channelId"]!.GetValue<string>() },
+            ["session"] = new JsonObject { ["mode"] = "existing", ["id"] = parent["sessionId"]!.GetValue<string>() },
+            ["content"] = new JsonObject { ["type"] = "text", ["text"] = input.Text },
+            ["parentMessageId"] = parent["id"]!.GetValue<string>()
+        });
+        _isSendingReply = true;
+        UpdateThreadComposer();
+        SetThreadStatus(null);
+        try
+        {
+            await model.SubmitAsync(_pendingReply, closing.Token);
+            if (ReferenceEquals(_threadEditor, input))
+            {
+                _pendingReply = null;
+                input.Text = "";
+                SetThreadStatus("Reply sent.");
+            }
+        }
+        catch (Exception error) when (!closing.IsCancellationRequested)
+        {
+            if (ReferenceEquals(_threadEditor, input))
+                SetThreadStatus($"Reply not confirmed: {error.Message} Retry unchanged to keep the request ID.");
+        }
+        catch (OperationCanceledException) when (closing.IsCancellationRequested) { }
+        finally
+        {
+            _isSendingReply = false;
+            UpdateThreadComposer();
+            if (ReferenceEquals(_threadEditor, input)) input.Focus(FocusState.Programmatic);
+        }
+    }
+
+    private void SetThreadStatus(string? text)
+    {
+        if (_threadStatus is null) return;
+        _threadStatus.Text = text ?? "";
+        _threadStatus.Visibility = text is null ? Visibility.Collapsed : Visibility.Visible;
     }
 
     private async Task LoadThreadPageAsync(bool reset = false)
@@ -742,7 +888,6 @@ public sealed partial class MainWindow : Window
             ["type"] = "message", ["channel"] = new JsonObject { ["mode"] = "existing", ["id"] = channelId },
             ["session"] = new JsonObject { ["mode"] = "existing", ["id"] = sessionId },
             ["content"] = original.Image is null ? new JsonObject { ["type"] = "text", ["text"] = original.Text } : new JsonObject { ["type"] = "image", ["caption"] = original.Text },
-            ["parentMessageId"] = original.Parent?["id"]?.GetValue<string>(),
             ["targetUserIds"] = new JsonArray(original.Targets.Keys.Select(id => (JsonNode?)JsonValue.Create(id)).ToArray())
         }, original.Image);
         var command = original.Pending;
@@ -759,7 +904,6 @@ public sealed partial class MainWindow : Window
                 if (draftKey == originalKey) { draft = new(); RestoreDraft(); }
             }
             ShowNotice("Sent.", InfoBarSeverity.Success);
-            if (threadDialog is not null && thread.RootId is not null) await LoadThreadPageAsync(true);
         }
         catch (Exception)
         {
@@ -823,7 +967,7 @@ public sealed partial class MainWindow : Window
         }
         // Never silently truncate existing text when the user attaches an image.
         editor.MaxLength = 16384;
-        var hasContext = draft.Parent is not null || draft.Image is not null;
+        var hasContext = draft.Image is not null;
         editor.IsEnabled = model.CanCompose(draftKey) && !sending && draftCapacityAvailable;
         if (attachImage is not null) attachImage.IsEnabled = editor.IsEnabled;
         if (clearContext is not null)
@@ -834,10 +978,7 @@ public sealed partial class MainWindow : Window
         send.IsEnabled = editor.IsEnabled;
         send.Content = sending ? "Sending…" : draft.Pending is null ? "Send" : "Retry send";
         draftContext.Visibility = hasContext ? Visibility.Visible : Visibility.Collapsed;
-        draftContext.Text = draft.Parent is not null
-            ? "Replying to " + model.UserLabel(draft.Parent["authorUserId"]?.GetValue<string>())
-                + (draft.Image is not null ? " · " + draft.ImageName : "")
-            : draft.Image is not null ? draft.ImageName ?? "Attached image" : "";
+        draftContext.Text = hasContext ? draft.ImageName ?? "Attached image" : "";
         if (!editor.IsEnabled || string.IsNullOrEmpty(draft.Text)) HideMentionSuggestions();
         synchronizing = old;
     }
@@ -1005,7 +1146,6 @@ public sealed partial class MainWindow : Window
         public string Text { get; set; } = "";
         public byte[]? Image { get; set; }
         public string? ImageName { get; set; }
-        public JsonObject? Parent { get; set; }
         public Dictionary<string, string> Targets { get; } = new();
         public FrozenCommand? Pending { get; set; }
         public long Revision { get; private set; }

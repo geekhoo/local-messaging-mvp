@@ -30,6 +30,15 @@ public sealed class ShellViewModel : INotifyPropertyChanged, IAsyncDisposable
     private string snapshot = "";
     private bool initializingSnapshot;
     private string userPrefix = "";
+    // Page DTOs contain counts through their own snapshot cursor. Reapply only later deltas.
+    private readonly Dictionary<string, SortedSet<long>> replyEvents = new();
+    private readonly Dictionary<string, SortedDictionary<long, string>> acknowledgementEvents = new();
+    private readonly HashSet<string> unreadThreads = new();
+    private const int MaximumCachedIndicatorEvents = 512;
+    private int cachedIndicatorEvents;
+    private bool indicatorRefreshPending;
+    private string? openThreadRoot;
+    private long streamBaseline;
     private readonly string settingsPath;
     private readonly NativeOptions options;
     public ObservableCollection<NavigationItem> Users { get; } = [];
@@ -57,6 +66,9 @@ public sealed class ShellViewModel : INotifyPropertyChanged, IAsyncDisposable
     public event PropertyChangedEventHandler? PropertyChanged;
     public event Action? Changed;
     public event Action<JsonObject>? MessageArrived;
+    public event Action<string>? AcknowledgementArrived;
+    public event Action? IndicatorRefreshRequired;
+    internal int CachedIndicatorEventCount => cachedIndicatorEvents;
     public MessagingClient Api => client ?? throw new InvalidOperationException("Host is not connected.");
     public ShellViewModel(Func<Func<Task>, Task> dispatcher, NativeOptions options)
     {
@@ -215,9 +227,12 @@ public sealed class ShellViewModel : INotifyPropertyChanged, IAsyncDisposable
             SessionId = null;
             Messages.Clear();
             Mentions.Clear();
+            unreadThreads.Clear();
+            openThreadRoot = null;
         }
         StoreEpoch = epoch;
         snapshot = status["headCursor"]!.GetValue<string>();
+        streamBaseline = CursorSequence(snapshot);
         userPage = channelPage = sessionPage = historyPage = mentionsPage = null;
         Users.Clear(); Channels.Clear(); Sessions.Clear();
         await LoadUsersCoreAsync();
@@ -235,9 +250,16 @@ public sealed class ShellViewModel : INotifyPropertyChanged, IAsyncDisposable
             // Catalog H is already loaded; still install replay after H before releasing it.
         }
         finally { initializingSnapshot = false; }
+        // The consumer is stopped and all pages reflect this head cursor; replay starts after it.
+        replyEvents.Clear();
+        acknowledgementEvents.Clear();
+        unreadThreads.Clear();
+        cachedIndicatorEvents = 0;
+        indicatorRefreshPending = false;
         if (ActiveUserId is Guid caller)
         {
-            var subscription = await Api.CreateSubscriptionAsync(caller, snapshot, lifetime.Token);
+            var subscription = await Api.CreateSubscriptionAsync(caller, snapshot, cancellationToken: lifetime.Token,
+                includeAcknowledgements: CapabilityEnabled(capabilities, "liveAcknowledgementSummaries"));
             subscriptionId = subscription["id"]!.GetValue<string>();
             subscriptionOwner = caller;
             StartConsumer(subscriptionId, subscription["startCursor"]!.GetValue<string>());
@@ -250,6 +272,7 @@ public sealed class ShellViewModel : INotifyPropertyChanged, IAsyncDisposable
     private async Task SelectUserCoreAsync(Guid id)
     {
         if (id == ActiveUserId) return;
+        unreadThreads.Clear();
         ActiveUserId = id;
         ShowingMentions = false;
         Mentions.Clear();
@@ -412,7 +435,7 @@ public sealed class ShellViewModel : INotifyPropertyChanged, IAsyncDisposable
         if (selected != SessionId || token.IsCancellationRequested) return;
         historySnapshot = page["snapshotCursor"]!.GetValue<string>();
         historyPage = page["nextPageToken"]?.GetValue<string>();
-        foreach (var message in Objects(page["items"])) MergeMessage(Messages, message, keepNewest: false);
+        foreach (var message in Objects(page["items"])) MergeMessage(Messages, message, keepNewest: false, snapshotCursor: historySnapshot);
         Notify();
     }
 
@@ -429,7 +452,7 @@ public sealed class ShellViewModel : INotifyPropertyChanged, IAsyncDisposable
         if (ActiveUserId != user || !ShowingMentions || token.IsCancellationRequested) return;
         mentionsSnapshot = page["snapshotCursor"]!.GetValue<string>();
         mentionsPage = page["nextPageToken"]?.GetValue<string>();
-        foreach (var message in Objects(page["items"])) MergeMessage(Mentions, message, keepNewest: false);
+        foreach (var message in Objects(page["items"])) MergeMessage(Mentions, message, keepNewest: false, snapshotCursor: mentionsSnapshot);
         Notify();
     }
 
@@ -482,7 +505,7 @@ public sealed class ShellViewModel : INotifyPropertyChanged, IAsyncDisposable
         await SelectSessionCoreAsync(session["id"]!.GetValue<string>());
     }
 
-    private void ApplyEvent(JsonObject e)
+    internal void ApplyEvent(JsonObject e)
     {
         if (e["dataObject"] is not JsonObject value) return;
         switch (e["eventType"]?.GetValue<string>())
@@ -492,20 +515,94 @@ public sealed class ShellViewModel : INotifyPropertyChanged, IAsyncDisposable
             case "session.created":
                 if (value["channelId"]?.GetValue<string>() == ChannelId) Merge(Sessions, Session((JsonObject)value.DeepClone()));
                 break;
-            case "message.created": ApplyMessage((JsonObject)value.DeepClone()); break;
+            case "message.created": ApplyMessage((JsonObject)value.DeepClone(), fromStream: true); break;
+            case "acknowledgement.created":
+                if (value["messageId"]?.GetValue<string>() is string messageId && value["profile"]?["handle"]?.GetValue<string>() is string handle
+                    && CursorSequence(e["cursor"]?.GetValue<string>()) is long sequence && sequence > streamBaseline)
+                {
+                    if (RecordAcknowledgement(messageId, handle, sequence)) AcknowledgementArrived?.Invoke(messageId);
+                }
+                break;
         }
         Notify();
     }
 
-    private void ApplyMessage(JsonObject value)
+    private void ApplyMessage(JsonObject value, bool fromStream = false)
     {
+        if (value["parentMessageId"]?.GetValue<string>() is string parent && value["threadRootMessageId"]?.GetValue<string>() is string threadRoot)
+        {
+            var sequence = MessageSequence(value);
+            var first = RecordReply(threadRoot, sequence);
+            if (first && parent != threadRoot) RecordReply(parent, sequence);
+            if (first && fromStream && sequence > streamBaseline && openThreadRoot != threadRoot
+                && ActiveUserId is Guid profile && value["authorUserId"]?.GetValue<string>() != profile.ToString())
+                unreadThreads.Add(threadRoot);
+        }
         if (value["sessionId"]?.GetValue<string>() == SessionId && value["parentMessageId"] is null)
             MergeMessage(Messages, value);
         if (ActiveUserId is Guid user && value["targetUserIds"] is JsonArray targets
             && targets.Any(x => x?.GetValue<string>() == user.ToString())) MergeMessage(Mentions, (JsonObject)value.DeepClone());
         MessageArrived?.Invoke(value);
-        // Replies never become detached roots. Threads are queried when opened; their cards expose Refresh.
     }
+
+    private bool RecordReply(string messageId, long sequence)
+    {
+        if (replyEvents.TryGetValue(messageId, out var existing) && existing.Contains(sequence)) return false;
+        if (!ReserveIndicatorEvent()) return false;
+        if (existing is null) replyEvents[messageId] = existing = new();
+        existing.Add(sequence);
+        return true;
+    }
+
+    private bool RecordAcknowledgement(string messageId, string handle, long sequence)
+    {
+        if (acknowledgementEvents.TryGetValue(messageId, out var existing) && existing.ContainsKey(sequence)) return false;
+        if (!ReserveIndicatorEvent()) return false;
+        if (existing is null) acknowledgementEvents[messageId] = existing = new();
+        existing.Add(sequence, handle);
+        return true;
+    }
+
+    private bool ReserveIndicatorEvent()
+    {
+        if (indicatorRefreshPending || cachedIndicatorEvents >= MaximumCachedIndicatorEvents) return false;
+        cachedIndicatorEvents++;
+        if (cachedIndicatorEvents == MaximumCachedIndicatorEvents)
+        {
+            indicatorRefreshPending = true;
+            IndicatorRefreshRequired?.Invoke();
+        }
+        return true;
+    }
+
+    public bool HasNewReply(string messageId) => unreadThreads.Contains(messageId);
+
+    public void SetOpenThread(string? rootId)
+    {
+        openThreadRoot = rootId;
+        if (rootId is not null && unreadThreads.Remove(rootId)) Notify();
+    }
+
+    public (int ReplyCount, int AcknowledgementCount, string? LatestHandle) MessageIndicators(JsonObject message)
+    {
+        var id = message["id"]!.GetValue<string>();
+        var baseline = message["_nativeSnapshotSequence"]?.GetValue<long>() ?? MessageSequence(message);
+        var replies = message["replyCount"]?.GetValue<int>() ?? 0;
+        if (replyEvents.TryGetValue(id, out var liveReplies) && baseline < long.MaxValue)
+            replies += liveReplies.GetViewBetween(baseline + 1, long.MaxValue).Count;
+        var count = message["acknowledgementCount"]?.GetValue<int>() ?? 0;
+        var handle = message["latestAcknowledgingHandle"]?.GetValue<string>();
+        if (acknowledgementEvents.TryGetValue(id, out var liveAcks))
+        {
+            foreach (var (sequence, latest) in liveAcks)
+                if (sequence > baseline) { count++; handle = latest; }
+        }
+        return (replies, count, handle);
+    }
+
+    internal static void StampSnapshot(JsonObject message, string? cursor) => message["_nativeSnapshotSequence"] = CursorSequence(cursor);
+    private static long MessageSequence(JsonObject message) => long.Parse(message["sequence"]!.GetValue<string>(), System.Globalization.CultureInfo.InvariantCulture);
+    private static long CursorSequence(string? cursor) => cursor is not null && long.TryParse(cursor.AsSpan(cursor.LastIndexOf(':') + 1), out var sequence) ? sequence : 0;
 
     private static void Merge(ObservableCollection<NavigationItem> target, NavigationItem item)
     {
@@ -514,11 +611,17 @@ public sealed class ShellViewModel : INotifyPropertyChanged, IAsyncDisposable
         // A bounded window of navigation; the Next action continues the authoritative paged query.
         while (target.Count > 200) target.RemoveAt(0);
     }
-    private static void MergeMessage(ObservableCollection<JsonObject> target, JsonObject item, bool keepNewest = true)
+    private static void MergeMessage(ObservableCollection<JsonObject> target, JsonObject item, bool keepNewest = true, string? snapshotCursor = null)
     {
+        if (snapshotCursor is not null) StampSnapshot(item, snapshotCursor);
         var id = item["id"]!.GetValue<string>();
         var old = target.FirstOrDefault(x => x["id"]?.GetValue<string>() == id);
-        if (old is not null) target.Remove(old);
+        if (old is not null)
+        {
+            // A receipt or replay does not carry the historical summary from a page.
+            if ((old["_nativeSnapshotSequence"]?.GetValue<long>() ?? -1) > (item["_nativeSnapshotSequence"]?.GetValue<long>() ?? -1)) return;
+            target.Remove(old);
+        }
         var sequence = long.Parse(item["sequence"]!.GetValue<string>());
         int index = 0;
         while (index < target.Count && long.Parse(target[index]["sequence"]!.GetValue<string>()) < sequence) index++;

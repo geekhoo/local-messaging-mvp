@@ -128,6 +128,7 @@ public sealed partial class MessagingStore
         var target = filter["targetUserId"]?.GetValue<string>();
         var catalog = filter["catalog"]!.GetValue<bool>();
         var allMessages = filter["allMessages"]!.GetValue<bool>();
+        var allAcknowledgements = filter["allAcknowledgements"]?.GetValue<bool>() == true;
         // Header-only scan keeps broad/sparse filters bounded without materializing unrelated payloads.
         var headers = await db.EventLog.AsNoTracking()
             .Where(e => e.Sequence > position && e.Sequence <= head).OrderBy(e => e.Sequence)
@@ -140,6 +141,7 @@ public sealed partial class MessagingStore
         {
             var matches = catalog && header.EventType is ("user.created" or "channel.created" or "session.created")
                 || allMessages && header.EventType == "message.created"
+                || allAcknowledgements && header.EventType == "acknowledgement.created"
                 || header.ChannelId is not null && channels.Contains(header.ChannelId)
                 || header.SessionId is not null && sessions.Contains(header.SessionId)
                 || target is not null && header.EventType == "message.created" && (JsonSerializer.Deserialize<string[]>(header.Targets) ?? []).Contains(target, StringComparer.Ordinal);
@@ -288,9 +290,27 @@ public sealed partial class MessagingStore
         var roots = messages.Where(m => m.Depth == 1).Select(m => m.Id).ToArray();
         var counts = await db.Messages.AsNoTracking().Where(m => roots.Contains(m.ThreadRootMessageId) && m.Depth > 1 && m.CreatedSequence <= head)
             .GroupBy(m => m.ThreadRootMessageId).Select(g => new { Id = g.Key, Count = g.Count() }).ToDictionaryAsync(x => x.Id, x => x.Count, ct);
+        var directCounts = await db.Messages.AsNoTracking().Where(m => m.ParentMessageId != null && ids.Contains(m.ParentMessageId) && m.CreatedSequence <= head)
+            .GroupBy(m => m.ParentMessageId!).Select(g => new { Id = g.Key, Count = g.Count() }).ToDictionaryAsync(x => x.Id, x => x.Count, ct);
+        var visibleAcks = db.Acknowledgements.AsNoTracking().Where(a => a.Sequence <= head);
+        var summaries = await db.Messages.AsNoTracking().Where(m => ids.Contains(m.Id)).Select(m => new
+        {
+            m.Id,
+            Count = visibleAcks.Count(a => a.MessageId == m.Id),
+            LatestHandle = (from a in visibleAcks where a.MessageId == m.Id
+                            join user in db.Users on a.UserId equals user.Id
+                            orderby a.Sequence descending select user.Handle).FirstOrDefault()
+        }).ToDictionaryAsync(m => m.Id, ct);
         var targetGroups = targets.GroupBy(t => t.MessageId).ToDictionary(g => g.Key, g => g.Select(x => x.UserId).Order(StringComparer.Ordinal).ToArray());
-        return messages.Select(m => MessageDto(m, channels[m.SessionId], targetGroups.GetValueOrDefault(m.Id) ?? [],
-            m.ImageId is null ? null : ImageDto(images[m.ImageId]), m.Depth == 1 ? counts.GetValueOrDefault(m.Id) : null)).ToList();
+        return messages.Select(m =>
+        {
+            var dto = MessageDto(m, channels[m.SessionId], targetGroups.GetValueOrDefault(m.Id) ?? [],
+                m.ImageId is null ? null : ImageDto(images[m.ImageId]), m.Depth == 1 ? counts.GetValueOrDefault(m.Id) : directCounts.GetValueOrDefault(m.Id));
+            var summary = summaries[m.Id];
+            dto["acknowledgementCount"] = summary.Count;
+            dto["latestAcknowledgingHandle"] = summary.LatestHandle;
+            return dto;
+        }).ToList();
     }
 
     private static JsonObject UserDto(UserRow row) => new()

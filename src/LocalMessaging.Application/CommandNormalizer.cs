@@ -142,7 +142,7 @@ public static partial class CommandNormalizer
     public static JsonObject NormalizeFilter(JsonObject filter, ProductLimits? limits = null)
     {
         limits ??= new ProductLimits();
-        Keys(filter, "catalog", "allMessages", "channelIds", "sessionIds", "targetUserId");
+        Keys(filter, "catalog", "allMessages", "allAcknowledgements", "channelIds", "sessionIds", "targetUserId");
         var channels = IdArray(filter, "channelIds", limits.FilterIds);
         var sessions = IdArray(filter, "sessionIds", limits.FilterIds);
         if (channels.Count + sessions.Count > limits.FilterIds) throw Invalid("A filter exceeds the configured channel/session ID limit.");
@@ -151,7 +151,9 @@ public static partial class CommandNormalizer
             ["catalog"] = Boolean(filter, "catalog"), ["allMessages"] = Boolean(filter, "allMessages"),
             ["channelIds"] = channels, ["sessionIds"] = sessions, ["targetUserId"] = OptionalId(filter, "targetUserId")
         };
+        if (filter["allAcknowledgements"] is not null) normalized["allAcknowledgements"] = Boolean(filter, "allAcknowledgements");
         if (!normalized["catalog"]!.GetValue<bool>() && !normalized["allMessages"]!.GetValue<bool>()
+            && normalized["allAcknowledgements"]?.GetValue<bool>() != true
             && channels.Count == 0 && sessions.Count == 0 && normalized["targetUserId"] is null)
             throw Invalid("A subscription requires at least one nonempty filter branch.");
         return normalized;
@@ -280,10 +282,11 @@ public static partial class CommandNormalizer
         input[key] is null || (input[key] is JsonValue v && v.TryGetValue<string>(out var s) && string.IsNullOrWhiteSpace(s))
             ? null : Name(input, key, maximum);
 
-    private static string? OptionalText(JsonObject input, string key, int maximum, bool trim)
+    private static string? OptionalText(JsonObject input, string key, int maximum, bool trim, bool allowBareReturn = false)
     {
         if (input[key] is null) return null;
         var value = RequiredString(input, key).Replace("\r\n", "\n", StringComparison.Ordinal);
+        if (allowBareReturn) value = value.Replace('\r', '\n');
         if (trim) value = value.Trim();
         if (value.Length > maximum) throw Invalid(key + " exceeds its UTF-16 limit.");
         Controls(value);
@@ -292,7 +295,7 @@ public static partial class CommandNormalizer
 
     private static string? ContentText(JsonObject input, string key, int maximum, bool required)
     {
-        var value = OptionalText(input, key, maximum, trim: false);
+        var value = OptionalText(input, key, maximum, trim: false, allowBareReturn: true);
         if (required && string.IsNullOrWhiteSpace(value)) throw Invalid(key + " must not be empty or whitespace.");
         return value;
     }

@@ -1,7 +1,8 @@
 export function publicCapabilities(status) {
   return {
     profileAcknowledgements: status?.capabilities?.profileAcknowledgements === true,
-    participantRosters: status?.capabilities?.participantRosters === true
+    participantRosters: status?.capabilities?.participantRosters === true,
+    liveAcknowledgementSummaries: status?.capabilities?.liveAcknowledgementSummaries === true
   };
 }
 

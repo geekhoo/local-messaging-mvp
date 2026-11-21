@@ -215,6 +215,74 @@ try
         Assert(liveDescriptors.Count == 1 && liveDescriptors.Values.Single() == otherUser.ToString(), "Profile bootstrap lost its new owned subscription.");
         delayedSession = null;
     });
+    await Test("Native indicators merge committed snapshot and live events exactly once", () =>
+    {
+        const string rootId = "indicator-root", childId = "indicator-child";
+        var root = Message(rootId, rootId, null, 7);
+        root["replyCount"] = 1;
+        root["acknowledgementCount"] = 1;
+        root["latestAcknowledgingHandle"] = "initial";
+        ShellViewModel.StampSnapshot(root, cursor);
+        var child = Message(childId, rootId, rootId, 9);
+        ShellViewModel.StampSnapshot(child, cursor);
+        void Apply(string kind, JsonObject dto, long sequence) => model.ApplyEvent(new JsonObject
+        {
+            ["eventType"] = kind, ["cursor"] = $"{epoch}:{sequence}", ["dataObject"] = dto.DeepClone()
+        });
+        JsonObject Reply(string id, string parent, long sequence, string? author = null)
+        {
+            var reply = Message(id, rootId, parent, sequence);
+            reply["authorUserId"] = author ?? users[0]["id"]!.GetValue<string>();
+            return reply;
+        }
+        Assert(!model.HasNewReply(rootId) && model.MessageIndicators(root) == (1, 1, "initial"), "Initial snapshot was not shown as already seen.");
+        Apply("message.created", Reply(childId, rootId, 9), 9);
+        Assert(!model.HasNewReply(rootId) && model.MessageIndicators(root).ReplyCount == 1, "An already included historical reply changed the badge.");
+        var nested = Reply("grandchild", childId, 11);
+        Apply("message.created", nested, 11);
+        Assert(model.HasNewReply(rootId) && model.MessageIndicators(root).ReplyCount == 2
+            && model.MessageIndicators(child).ReplyCount == 1, "A live nested reply did not update its root and exact parent's counts.");
+        model.SetOpenThread(rootId);
+        model.SetOpenThread(null);
+        Apply("message.created", nested, 11);
+        Assert(!model.HasNewReply(rootId) && model.MessageIndicators(root).ReplyCount == 2, "Opening or replaying changed the wrong part of the indicator.");
+        Apply("message.created", Reply("own", rootId, 12, model.ActiveUserId!.Value.ToString()), 12);
+        model.SetOpenThread(rootId);
+        Apply("message.created", Reply("while-open", rootId, 13), 13);
+        model.SetOpenThread(null);
+        Assert(!model.HasNewReply(rootId) && model.MessageIndicators(root).ReplyCount == 4, "Own replies or replies received while reading the thread re-lit its badge.");
+        var acknowledgement = new JsonObject { ["messageId"] = rootId, ["profile"] = new JsonObject { ["handle"] = "copilot" } };
+        Apply("acknowledgement.created", acknowledgement, 14);
+        Apply("acknowledgement.created", acknowledgement, 14);
+        Assert(model.MessageIndicators(root) == (4, 2, "copilot"), "Committed acknowledgement did not merge exactly once and independently of the reply badge.");
+        root["replyCount"] = 4;
+        root["acknowledgementCount"] = 2;
+        root["latestAcknowledgingHandle"] = "copilot";
+        ShellViewModel.StampSnapshot(root, $"{epoch}:14");
+        Assert(model.MessageIndicators(root) == (4, 2, "copilot"), "A refreshed snapshot double-counted live events it already includes.");
+        return Task.CompletedTask;
+    });
+    await Test("Indicator caches stay bounded and retire on the real resnapshot", async () =>
+    {
+        var refreshes = 0;
+        void Refresh() => refreshes++;
+        model.IndicatorRefreshRequired += Refresh;
+        try
+        {
+            for (int i = 0; i < 600; i++)
+            {
+                var child = Message("bounded-" + i, "bounded-root-" + i, "bounded-root-" + i, 800 + i);
+                child["authorUserId"] = users[0]["id"]!.GetValue<string>();
+                model.ApplyEvent(new JsonObject { ["eventType"] = "message.created", ["cursor"] = $"{epoch}:{800 + i}", ["dataObject"] = child });
+            }
+            Assert(model.CachedIndicatorEventCount <= 512 && refreshes == 1,
+                "Live indicator storage exceeded its bound or did not request exactly one resnapshot.");
+            await model.ReloadAsync();
+            Assert(model.CachedIndicatorEventCount == 0 && refreshes == 1,
+                "The authoritative resnapshot did not retire pre-snapshot indicator deltas.");
+        }
+        finally { model.IndicatorRefreshRequired -= Refresh; }
+    });
     await model.DisposeAsync();
     Assert(liveDescriptors.IsEmpty, "Disposal left an owned subscription active.");
 }

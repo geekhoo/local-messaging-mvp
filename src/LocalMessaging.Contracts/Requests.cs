@@ -93,6 +93,7 @@ public sealed record SubscriptionFilter
 {
     public bool Catalog { get; init; }
     public bool AllMessages { get; init; }
+    public bool? AllAcknowledgements { get; init; }
     public Guid[]? ChannelIds { get; init; }
     public Guid[]? SessionIds { get; init; }
     public Guid? TargetUserId { get; init; }

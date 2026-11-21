@@ -4,12 +4,12 @@ import { Api } from "../api.js";
 import { publicCapabilities, publicAction, readPublicPage } from "../public-lists.js";
 
 test("public profile capabilities are independent, opt-in flags", () => {
-  assert.deepEqual(publicCapabilities({}), { profileAcknowledgements: false, participantRosters: false });
+  assert.deepEqual(publicCapabilities({}), { profileAcknowledgements: false, participantRosters: false, liveAcknowledgementSummaries: false });
   assert.deepEqual(publicCapabilities({ capabilities: { profileAcknowledgements: true, participantRosters: "true" } }), {
-    profileAcknowledgements: true, participantRosters: false
+    profileAcknowledgements: true, participantRosters: false, liveAcknowledgementSummaries: false
   });
   assert.deepEqual(publicCapabilities({ capabilities: { participantRosters: true } }), {
-    profileAcknowledgements: false, participantRosters: true
+    profileAcknowledgements: false, participantRosters: true, liveAcknowledgementSummaries: false
   });
 });
 

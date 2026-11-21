@@ -368,15 +368,19 @@ static class Tests
     public static async Task ThreadPages()
     {
         await using var f = await Fixture.Create();
-        var root = Fixture.MessageId(await f.Send(f.Text("Root")));
+        var root = Fixture.MessageId(await f.Send(f.Text("Root\rsecond\r\nthird\nfourth")));
         var h = (await f.Store.GetStatusAsync())["headCursor"]!.GetValue<string>();
-        var child = Fixture.MessageId(await f.Send(f.Text("Child", parent: root)));
+        var child = Fixture.MessageId(await f.Send(f.Text("Child\rsecond\r\nthird\nfourth", parent: root)));
         var nested = Fixture.MessageId(await f.Send(f.Text("Nested", parent: child)));
         var old = await f.Store.QueryAsync("sessionMessages", Guid.Parse(f.Session), new PageQuery(AsOf: h));
         Eq(0, old["items"]![0]!["replyCount"]!.GetValue<int>());
         var first = await f.Store.QueryAsync("thread", Guid.Parse(nested), new PageQuery(Limit: 1));
         Eq(root, first["root"]!["id"]!.GetValue<string>());
         Eq(child, first["items"]![0]!["id"]!.GetValue<string>());
+        Eq("Root\nsecond\nthird\nfourth", first["root"]!["content"]!["text"]!.GetValue<string>());
+        Eq("Child\nsecond\nthird\nfourth", first["items"]![0]!["content"]!["text"]!.GetValue<string>());
+        Eq(1, first["items"]![0]!["replyCount"]!.GetValue<int>());
+        await Error(400, "invalid_contract", () => f.Send(f.Text("Still invalid\u0001", parent: root)));
         var second = await f.Store.QueryAsync("thread", Guid.Parse(nested), new PageQuery(Limit: 1, PageToken: first["nextPageToken"]!.GetValue<string>()));
         Eq(nested, second["items"]![0]!["id"]!.GetValue<string>());
         Eq(child, second["contextMessages"]![0]!["id"]!.GetValue<string>());
@@ -425,8 +429,10 @@ static class Tests
         await using var f = await Fixture.Create(fault: point => { if (armed && point == StoreFaultPoint.AfterCommitBeforeNotification) { armed = false; throw new InjectedFault(); } });
         var message = Guid.Parse(Fixture.MessageId(await f.Send(f.Text("Public message"))));
         var another = Guid.Parse(Fixture.MessageId(await f.Send(f.Text("Another message"))));
-        var before = (await f.Store.QueryAsync("messages", message)).ToJsonString();
+        var before = await f.Store.QueryAsync("messages", message);
+        var beforeCursor = (await f.Store.GetStatusAsync())["headCursor"]!.GetValue<string>();
         var sub = Fixture.SubscriptionId(await f.Store.CreateSubscriptionAsync(Fixture.Element(f.Subscription(new JsonObject { ["allMessages"] = true }, "beginning"))));
+        var ackSub = Fixture.SubscriptionId(await f.Store.CreateSubscriptionAsync(Fixture.Element(f.Subscription(new JsonObject { ["allAcknowledgements"] = true }, "beginning"))));
         await f.Store.ReadEventsAsync(sub);
         Eq(0, (await f.Store.QueryAsync("acknowledgements", message))["items"]!.AsArray().Count);
         JsonObject Ack(string user, Guid id) => Fixture.Envelope(user, new JsonObject { ["type"] = "acknowledgement", ["messageId"] = id.ToString() });
@@ -452,7 +458,17 @@ static class Tests
         Eq(1, (await f.Store.QueryAsync("acknowledgements", another))["items"]!.AsArray().Count);
         await Error(404, "message_not_found", () => f.Send(Ack(f.B, Guid.NewGuid())));
         await Error(404, "user_not_found", () => f.Send(Ack(Guid.NewGuid().ToString(), message)));
-        Eq(before, (await f.Store.QueryAsync("messages", message)).ToJsonString());
+        var current = await f.Store.QueryAsync("messages", message);
+        Eq(3, current["acknowledgementCount"]!.GetValue<int>());
+        Eq("alice", current["latestAcknowledgingHandle"]!.GetValue<string>());
+        current["acknowledgementCount"] = 0;
+        current["latestAcknowledgingHandle"] = null;
+        Eq(before.ToJsonString(), current.ToJsonString());
+        var snapshot = await f.Store.QueryAsync("sessionMessages", Guid.Parse(f.Session), new PageQuery(AsOf: beforeCursor));
+        Eq(0, snapshot["items"]!.AsArray().Single(item => item!["id"]!.GetValue<string>() == message.ToString())!["acknowledgementCount"]!.GetValue<int>());
+        var events = await f.Store.ReadEventsAsync(ackSub, beforeCursor);
+        Eq(0, (await f.Store.ReadEventsAsync(sub, beforeCursor))["items"]!.AsArray().Count);
+        Eq(4, events["items"]!.AsArray().Count(item => item!["eventType"]!.GetValue<string>() == "acknowledgement.created"));
         Eq("4", await f.Scalar("SELECT count(*) FROM Acknowledgements;"));
         await Throws<SqliteException>(() => f.Scalar("INSERT INTO Acknowledgements SELECT MessageId, UserId, lower(hex(randomblob(16))), AcknowledgedUtcMs, Sequence FROM Acknowledgements LIMIT 1;"));
         var backup = Path.Combine(f.Directory, "public-profile-backup.db");
