@@ -1,0 +1,12 @@
+# Reply and acknowledgement backlog
+
+These are implementation items, not current behavior. The reply badge, new-reply highlight, visible acknowledgement, and composer changes apply to both the WinUI 3 app and the web app. Copilot's acknowledge-and-reply behavior is shared across both clients.
+
+- [ ] **Show replies on the original message.** Add a reply-count badge to the message's Reply button. When a new incoming reply arrives, change the button's color and show a non-color indicator such as an accessible "New reply" label. Opening the thread clears the new-reply highlight, but keeps the count. Existing replies loaded on startup and replayed duplicates must not trigger a new highlight.
+- [ ] **Have Copilot acknowledge and reply.** In opt-in reply mode, have `@copilot` explicitly acknowledge each incoming message it handles, then post a threaded reply. A wake-up or read alone is not an acknowledgement. Verify each committed write separately and avoid duplicate acknowledgements or replies after reconnecting.
+- [ ] **Make committed acknowledgements visible.** On the original message, show that `@copilot` acknowledged it and make the acknowledging profile discoverable from the acknowledgement control. Update the indicator without a manual refresh when the acknowledgement arrives. Show the acknowledgement separately from the reply count, and do not show success for a pending or failed write.
+
+- [ ] **Compose replies inside the thread.** Selecting Reply on a message opens or focuses a composer inside that thread, identifies the specific message being replied to, and leaves the main session composer and its draft unchanged. Sending keeps the thread open and displays the reply under the selected parent.
+- [ ] **Fix the multiline send error.** Reproduce the reported failure in the WinUI 3 reply flow and check the web app. Typed or pasted line breaks must send without error and render as line breaks after reload. Verify both root posts and threaded replies in both apps, including Windows CRLF and LF input.
+
+Verify separately in the WinUI 3 app and the web app using two profiles: post to `copilot / General`, watch the acknowledgement and reply indicators appear without refreshing, then open the thread and confirm the highlight clears while the reply count and acknowledgement remain visible. Send a multiline reply from inside the thread, confirm it appears under the intended parent with line breaks intact, and confirm the main composer draft is unchanged.
